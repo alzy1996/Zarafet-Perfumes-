@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zarafet Perfumes | Premium Fragrances</title>
+    <title>Zarafet Perfumes | Discover Your Signature Scent</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -23,6 +23,16 @@
             --text-light: #666666;
             --text-muted: #999999;
             --border: #e8e4df;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --cream: #1a1a1a;
+            --white: #242424;
+            --text: #f5f5f5;
+            --text-light: #b0b0b0;
+            --text-muted: #808080;
+            --border: #3a3a3a;
         }
 
         body {
@@ -30,21 +40,77 @@
             background: var(--white);
             color: var(--text);
             line-height: 1.6;
+            overflow-x: hidden;
+            transition: var(--transition);
         }
 
         h1, h2, h3, .brand-font {
             font-family: 'Cormorant Garamond', serif;
         }
 
+        /* Custom Cursor */
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--bronze);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s, width 0.3s, height 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        .custom-cursor.hover {
+            width: 50px;
+            height: 50px;
+            background: rgba(139, 115, 85, 0.1);
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--bronze);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        /* Page Transition Overlay */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bronze);
+            z-index: 10000;
+            transform: translateY(100%);
+            transition: transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .page-transition.active {
+            transform: translateY(0);
+        }
+
         /* Header */
         header {
             background: var(--white);
-            padding: 1.5rem 5%;
+            padding: 1.2rem 5%;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
             border-bottom: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            padding: 0.8rem 5%;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
         }
 
         nav {
@@ -59,12 +125,18 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
         }
 
         .logo img {
             height: 45px;
             width: 45px;
             object-fit: contain;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover img {
+            transform: rotate(15deg) scale(1.1);
         }
 
         .logo-text {
@@ -87,11 +159,44 @@
             font-size: 0.85rem;
             font-weight: 400;
             letter-spacing: 1px;
-            transition: color 0.3s;
+            transition: var(--transition);
             text-transform: uppercase;
+            position: relative;
         }
 
-        .nav-links a:hover {
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--bronze);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--bronze);
             color: var(--bronze);
         }
 
@@ -100,6 +205,11 @@
             cursor: pointer;
             font-size: 1.1rem;
             color: var(--text);
+            transition: var(--transition);
+        }
+
+        .cart-icon:hover {
+            color: var(--bronze);
         }
 
         .cart-count {
@@ -112,41 +222,112 @@
             padding: 2px 6px;
             border-radius: 50%;
             font-weight: 600;
+            animation: pulse 2s infinite;
         }
 
-        /* Hero Section */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Hero Section with Parallax */
         .hero {
-            margin-top: 85px;
-            height: 85vh;
-            background: linear-gradient(135deg, rgba(250,248,245,0.95) 0%, rgba(250,248,245,0.9) 100%),
-                        url('https://images.unsplash.com/photo-1541643600914-78b084683601?w=1920') center/cover;
+            margin-top: 80px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(250,248,245,0.98) 0%, rgba(250,248,245,0.95) 100%),
+                        url('https://images.unsplash.com/photo-1594035910387-fea47794261f?w=1920') center/cover fixed;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="%238b7355" opacity="0.1"/></svg>');
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border: 1px solid var(--bronze);
+            color: var(--bronze);
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards;
         }
 
         .hero-content h1 {
-            font-size: 4.5rem;
+            font-size: clamp(3rem, 8vw, 6rem);
             font-weight: 300;
-            letter-spacing: 8px;
+            letter-spacing: 10px;
             margin-bottom: 1.5rem;
             text-transform: uppercase;
             color: var(--text);
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.2s forwards;
         }
 
         .hero-content p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--text-light);
             letter-spacing: 3px;
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
             font-weight: 300;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.4s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.6s forwards;
         }
 
         .btn {
-            display: inline-block;
-            padding: 16px 45px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 40px;
             background: var(--bronze);
             border: none;
             color: var(--white);
@@ -155,12 +336,31 @@
             letter-spacing: 2px;
             font-size: 0.8rem;
             font-weight: 500;
-            transition: all 0.3s;
+            transition: var(--transition);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
             background: var(--bronze-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 115, 85, 0.3);
         }
 
         .btn-outline {
@@ -172,33 +372,185 @@
         .btn-outline:hover {
             background: var(--text);
             color: var(--white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        /* Section Styles */
-        section {
+        /* Scent Aura Particles */
+        .scent-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--bronze);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particle-float 15s infinite;
+        }
+
+        @keyframes particle-float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            background: var(--cream);
             padding: 6rem 5%;
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
-        .section-title {
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 3rem;
+        }
+
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .quiz-progress::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .quiz-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .quiz-step.active {
+            border-color: var(--bronze);
+            background: var(--bronze);
+            color: var(--white);
+        }
+
+        .quiz-step.completed {
+            border-color: var(--bronze);
+            color: var(--bronze);
+        }
+
+        .quiz-question {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .quiz-question h3 {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-question p {
+            color: var(--text-light);
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .quiz-option {
+            padding: 2rem;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--bronze);
+            background: rgba(139, 115, 85, 0.05);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--bronze);
+            background: var(--bronze);
+            color: var(--white);
+        }
+
+        .quiz-option i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .quiz-result {
+            display: none;
+            text-align: center;
+        }
+
+        .quiz-result.show {
+            display: block;
+            animation: fadeInUp 0.8s;
+        }
+
+        .quiz-recommendations {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Products Section */
+        .products-section {
+            padding: 6rem 5%;
+            background: var(--white);
+        }
+
+        .section-header {
             text-align: center;
             margin-bottom: 4rem;
         }
 
-        .section-title h2 {
-            font-size: 2.8rem;
+        .section-header h2 {
+            font-size: 3rem;
             font-weight: 300;
             letter-spacing: 4px;
             text-transform: uppercase;
             margin-bottom: 1rem;
-            color: var(--text);
-        }
-
-        .section-title p {
-            color: var(--text-light);
-            letter-spacing: 2px;
-            font-size: 0.95rem;
         }
 
         .section-line {
@@ -208,10 +560,34 @@
             margin: 1.5rem auto;
         }
 
-        /* Products Grid */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .filter-tab {
+            padding: 0.8rem 1.5rem;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-tab:hover,
+        .filter-tab.active {
+            border-color: var(--bronze);
+            color: var(--bronze);
+        }
+
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 3rem;
         }
 
@@ -219,15 +595,23 @@
             background: var(--white);
             border: 1px solid var(--border);
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            position: relative;
+            perspective: 1000px;
         }
 
         .product-card:hover {
-            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .product-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
         }
 
         .product-image {
-            height: 380px;
+            height: 400px;
             background: var(--cream);
             display: flex;
             align-items: center;
@@ -240,17 +624,17 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s;
+            transition: transform 0.8s;
         }
 
         .product-card:hover .product-image img {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
 
         .product-placeholder {
-            font-size: 4rem;
+            font-size: 5rem;
             color: var(--bronze-light);
-            opacity: 0.4;
+            opacity: 0.3;
         }
 
         .product-badge {
@@ -264,6 +648,50 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
+            z-index: 2;
+        }
+
+        .product-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-actions {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .action-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background: var(--bronze);
+            border-color: var(--bronze);
+            color: var(--white);
+        }
+
+        .action-btn.wishlisted {
+            background: #c44;
+            border-color: #c44;
+            color: var(--white);
         }
 
         .product-info {
@@ -281,7 +709,7 @@
 
         .product-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 500;
             margin-bottom: 0.8rem;
             color: var(--text);
@@ -292,6 +720,50 @@
             font-size: 0.9rem;
             margin-bottom: 1.2rem;
             line-height: 1.6;
+        }
+
+        /* Fragrance Pyramid */
+        .fragrance-pyramid {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--cream);
+            border: 1px solid var(--border);
+        }
+
+        .pyramid-title {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .pyramid-levels {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pyramid-level {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pyramid-level:hover {
+            border-color: var(--bronze);
+            background: rgba(139, 115, 85, 0.05);
+        }
+
+        .pyramid-level i {
+            color: var(--bronze);
         }
 
         .product-notes {
@@ -307,6 +779,12 @@
             font-size: 0.75rem;
             color: var(--text-light);
             border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .note-tag:hover {
+            border-color: var(--bronze);
+            color: var(--bronze);
         }
 
         .product-footer {
@@ -318,7 +796,7 @@
         }
 
         .product-price {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: var(--bronze-dark);
             font-weight: 600;
             font-family: 'Cormorant Garamond', serif;
@@ -335,11 +813,11 @@
             background: var(--bronze);
             color: var(--white);
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -349,11 +827,285 @@
 
         .add-to-cart:hover {
             background: var(--bronze-dark);
+            transform: scale(1.05);
+        }
+
+        /* Sample Set Builder */
+        .sample-builder {
+            background: var(--cream);
+            padding: 4rem;
+            margin: 4rem auto;
+            max-width: 1000px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .sample-builder h3 {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .sample-slots {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .sample-slot {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .sample-slot.filled {
+            border-color: var(--bronze);
+            border-style: solid;
+            background: var(--white);
+        }
+
+        .sample-slot img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .sample-slot .remove-sample {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #c44;
+            color: var(--white);
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .sample-price {
+            font-size: 1.5rem;
+            color: var(--bronze);
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+
+        /* Scent Pairing Guide */
+        .pairing-section {
+            background: var(--white);
+            padding: 6rem 5%;
+        }
+
+        .pairing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pairing-card {
+            text-align: center;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .pairing-card:hover {
+            border-color: var(--bronze);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .pairing-card i {
+            font-size: 3rem;
+            color: var(--bronze);
+            margin-bottom: 1rem;
+        }
+
+        .pairing-card h4 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .pairing-card p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* Memory Wall */
+        .memory-section {
+            background: var(--cream);
+            padding: 6rem 5%;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .memory-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .memory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .memory-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .memory-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bronze);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .memory-meta h5 {
+            font-weight: 500;
+        }
+
+        .memory-meta span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .memory-content {
+            font-style: italic;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        .memory-product {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--bronze);
+        }
+
+        /* Virtual Unboxing */
+        .unboxing-section {
+            background: var(--white);
+            padding: 6rem 5%;
+            text-align: center;
+        }
+
+        .unboxing-stage {
+            max-width: 600px;
+            margin: 3rem auto;
+            position: relative;
+        }
+
+        .package {
+            width: 300px;
+            height: 200px;
+            background: linear-gradient(135deg, #d4a574 0%, #c9956c 100%);
+            margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .package:hover {
+            transform: scale(1.02);
+        }
+
+        .package::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: rgba(0,0,0,0.1);
+            transform: translateY(-50%);
+        }
+
+        .package::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 40px;
+            height: 100%;
+            background: rgba(0,0,0,0.1);
+            transform: translateX(-50%);
+        }
+
+        .package-ribbon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--bronze);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .package-contents {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .package-contents.show {
+            display: block;
+            animation: fadeInUp 0.8s;
+        }
+
+        .content-item {
+            display: inline-block;
+            padding: 1.5rem;
+            margin: 0.5rem;
+            background: var(--cream);
+            border: 1px solid var(--border);
+        }
+
+        .content-item i {
+            font-size: 2rem;
+            color: var(--bronze);
+            margin-bottom: 0.5rem;
         }
 
         /* About Section */
-        .about {
+        .about-section {
             background: var(--cream);
+            padding: 6rem 5%;
         }
 
         .about-content {
@@ -361,28 +1113,35 @@
             grid-template-columns: 1fr 1fr;
             gap: 5rem;
             align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .about-image {
-            height: 550px;
-            background: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--border);
+            position: relative;
         }
 
-        .about-image i {
-            font-size: 6rem;
-            color: var(--bronze-light);
-            opacity: 0.3;
+        .about-image img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .about-image::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--bronze);
+            z-index: -1;
         }
 
         .about-text h3 {
-            font-size: 2.2rem;
-            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
             font-weight: 300;
-            color: var(--text);
+            margin-bottom: 1.5rem;
         }
 
         .about-text h3 span {
@@ -394,52 +1153,51 @@
             color: var(--text-light);
             margin-bottom: 1.5rem;
             line-height: 1.8;
-            font-size: 0.95rem;
         }
 
-        .features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin-top: 2.5rem;
-        }
-
-        .feature {
+        .stats-row {
             display: flex;
-            align-items: center;
-            gap: 1rem;
+            gap: 3rem;
+            margin-top: 2rem;
         }
 
-        .feature i {
+        .stat-item h4 {
+            font-size: 2.5rem;
             color: var(--bronze);
-            font-size: 1.3rem;
+            font-weight: 300;
         }
 
-        .feature span {
-            font-size: 0.9rem;
-            color: var(--text);
+        .stat-item span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Contact Section */
-        .contact {
+        .contact-section {
             background: var(--white);
+            padding: 6rem 5%;
         }
 
         .contact-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 3rem;
-            text-align: center;
+            max-width: 1000px;
+            margin: 3rem auto 0;
         }
 
         .contact-card {
+            text-align: center;
             padding: 3rem 2rem;
             border: 1px solid var(--border);
-            transition: all 0.3s;
+            transition: var(--transition);
         }
 
         .contact-card:hover {
             border-color: var(--bronze);
+            background: var(--cream);
         }
 
         .contact-card i {
@@ -449,22 +1207,19 @@
         }
 
         .contact-card h4 {
+            font-size: 1rem;
             margin-bottom: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text);
         }
 
         .contact-card p {
             color: var(--text-light);
-            font-size: 0.95rem;
         }
 
-        /* Newsletter Section */
-        .newsletter {
-            background: var(--cream);
+        /* Newsletter */
+        .newsletter-section {
+            background: var(--bronze);
             padding: 4rem 5%;
         }
 
@@ -472,18 +1227,17 @@
             max-width: 600px;
             margin: 0 auto;
             text-align: center;
+            color: var(--white);
         }
 
-        .newsletter h3 {
-            font-size: 1.5rem;
+        .newsletter-content h3 {
+            font-size: 2rem;
             font-weight: 400;
-            margin-bottom: 0.8rem;
-            color: var(--text);
+            margin-bottom: 1rem;
         }
 
-        .newsletter p {
-            color: var(--text-light);
-            font-size: 0.9rem;
+        .newsletter-content p {
+            opacity: 0.9;
             margin-bottom: 2rem;
         }
 
@@ -496,26 +1250,21 @@
 
         .newsletter-form input {
             flex: 1;
-            padding: 14px 20px;
-            border: 1px solid var(--border);
-            border-right: none;
+            padding: 16px 24px;
+            border: none;
             font-size: 0.9rem;
             outline: none;
         }
 
-        .newsletter-form input::placeholder {
-            color: var(--text-muted);
-        }
-
         .newsletter-form button {
-            padding: 14px 30px;
-            background: var(--bronze);
+            padding: 16px 30px;
+            background: var(--text);
             color: var(--white);
-            border: 1px solid var(--bronze);
+            border: none;
             font-size: 0.85rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -544,7 +1293,6 @@
             font-size: 1.8rem;
             font-weight: 500;
             margin-bottom: 1rem;
-            color: var(--text);
         }
 
         .footer-brand p {
@@ -556,17 +1304,25 @@
 
         .footer-social {
             display: flex;
-            gap: 1.2rem;
+            gap: 1rem;
         }
 
         .footer-social a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--text);
-            font-size: 1.1rem;
-            transition: color 0.3s;
+            transition: var(--transition);
         }
 
         .footer-social a:hover {
-            color: var(--bronze);
+            background: var(--bronze);
+            border-color: var(--bronze);
+            color: var(--white);
         }
 
         .footer-column h5 {
@@ -575,7 +1331,6 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 1.5rem;
-            color: var(--text);
         }
 
         .footer-column ul {
@@ -590,7 +1345,7 @@
             color: var(--text-light);
             text-decoration: none;
             font-size: 0.9rem;
-            transition: color 0.3s;
+            transition: var(--transition);
         }
 
         .footer-column a:hover {
@@ -610,37 +1365,19 @@
         .footer-bottom p {
             color: var(--text-muted);
             font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.8rem;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--bronze);
         }
 
         /* Cart Sidebar */
         .cart-sidebar {
             position: fixed;
             top: 0;
-            right: -420px;
-            width: 420px;
+            right: -450px;
+            width: 450px;
             height: 100vh;
             background: var(--white);
             border-left: 1px solid var(--border);
             z-index: 2000;
-            transition: right 0.3s;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
         }
@@ -659,18 +1396,22 @@
 
         .cart-header h3 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             font-weight: 400;
-            text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
         .close-cart {
             background: none;
             border: none;
             color: var(--text);
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-cart:hover {
+            color: var(--bronze);
+            transform: rotate(90deg);
         }
 
         .cart-items {
@@ -684,8 +1425,13 @@
             gap: 1.2rem;
             padding: 1.2rem;
             background: var(--cream);
-            margin-bottom: 1rem;
             border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .cart-item:hover {
+            border-color: var(--bronze);
         }
 
         .cart-item-image {
@@ -726,11 +1472,12 @@
             color: var(--text-muted);
             cursor: pointer;
             font-size: 1rem;
-            transition: color 0.3s;
+            transition: var(--transition);
         }
 
         .remove-item:hover {
             color: #c44;
+            transform: scale(1.2);
         }
 
         .cart-footer {
@@ -745,33 +1492,35 @@
             font-size: 1.1rem;
         }
 
-        .cart-total span:first-child {
-            font-weight: 500;
-        }
-
         .cart-total span:last-child {
             color: var(--bronze-dark);
             font-weight: 600;
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
         }
 
         .checkout-btn {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: var(--bronze);
             color: var(--white);
             border: none;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .checkout-btn:hover {
             background: var(--bronze-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 115, 85, 0.3);
         }
 
         .overlay {
@@ -780,19 +1529,48 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             z-index: 1500;
             display: none;
+            backdrop-filter: blur(5px);
         }
 
         .overlay.active {
             display: block;
         }
 
+        /* Wishlist Sidebar */
+        .wishlist-sidebar {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100vh;
+            background: var(--white);
+            border-left: 1px solid var(--border);
+            z-index: 2000;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wishlist-sidebar.open {
+            right: 0;
+        }
+
         /* Responsive */
+        @media (max-width: 1200px) {
+            .pairing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .quiz-recommendations {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 968px) {
             .hero-content h1 {
-                font-size: 2.8rem;
+                font-size: 2.5rem;
             }
             
             .about-content {
@@ -812,9 +1590,27 @@
                 display: none;
             }
             
-            .cart-sidebar {
+            .cart-sidebar,
+            .wishlist-sidebar {
                 width: 100%;
                 right: -100%;
+            }
+
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+
+            .pairing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .custom-cursor {
+                display: none;
             }
         }
 
@@ -828,6 +1624,14 @@
                 gap: 1rem;
                 text-align: center;
             }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Toast Notification */
@@ -835,41 +1639,124 @@
             position: fixed;
             bottom: 30px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(100px);
             background: var(--bronze);
             color: var(--white);
-            padding: 14px 35px;
-            font-size: 0.9rem;
+            padding: 16px 40px;
+            font-size: 0.95rem;
             font-weight: 500;
             z-index: 3000;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .toast.show {
             opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            letter-spacing: 5px;
+            color: var(--bronze);
+            animation: loader-pulse 1.5s infinite;
+        }
+
+        @keyframes loader-pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">ZARAFET</div>
+            <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem; letter-spacing: 3px;">PERFUMES</p>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="cursor"></div>
+
+    <!-- Scent Particles -->
+    <div class="scent-particles" id="particles"></div>
+
     <!-- Header -->
-    <header>
+    <header id="header">
         <nav>
-            <div class="logo">
+            <div class="logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
                 <img src="logo.png" alt="Zarafet Perfumes">
-                <div class="logo-text">ZARAFET PERFUMES</div>
+                <div class="logo-text">ZARAFET</div>
             </div>
             
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
+                <li><a href="#quiz">Quiz</a></li>
                 <li><a href="#collection">Collection</a></li>
+                <li><a href="#pairing">Pairing</a></li>
+                <li><a href="#memory">Stories</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
             
-            <div class="cart-icon" onclick="toggleCart()">
-                <i class="fas fa-shopping-bag"></i>
-                <span class="cart-count" id="cartCount">0</span>
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <div class="cart-icon" onclick="toggleCart()">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <div class="cart-icon" onclick="toggleWishlist()" style="margin-left: -0.5rem;">
+                    <i class="fas fa-heart"></i>
+                    <span class="cart-count" id="wishlistCount">0</span>
+                </div>
             </div>
         </nav>
     </header>
@@ -877,53 +1764,218 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content">
+            <span class="hero-badge">Est. 2024 • Muscat, Oman</span>
             <h1>Discover Your Signature Scent</h1>
-            <p>Premium Fragrances Curated for the Discerning Individual</p>
-            <a href="#collection" class="btn">Explore Collection</a>
+            <p>Handcrafted luxury fragrances that capture the essence of Arabian heritage blended with modern sophistication</p>
+            <div class="hero-buttons">
+                <a href="#quiz" class="btn">
+                    <i class="fas fa-magic"></i> Find Your Scent
+                </a>
+                <a href="#collection" class="btn btn-outline">
+                    Explore Collection
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section class="quiz-section" id="quiz">
+        <div class="section-header">
+            <h2>Perfume Finder</h2>
+            <div class="section-line"></div>
+            <p>Answer 5 simple questions and we'll recommend your perfect fragrance</p>
+        </div>
+        
+        <div class="quiz-container">
+            <div class="quiz-progress">
+                <div class="quiz-step active" id="step1">1</div>
+                <div class="quiz-step" id="step2">2</div>
+                <div class="quiz-step" id="step3">3</div>
+                <div class="quiz-step" id="step4">4</div>
+                <div class="quiz-step" id="step5">5</div>
+            </div>
+            
+            <div class="quiz-content" id="quizContent">
+                <!-- Question 1 -->
+                <div class="quiz-question" data-step="1">
+                    <h3>What's your ideal weekend?</h3>
+                    <p>Choose the activity that speaks to your soul</p>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectOption(1, 'desert')">
+                            <i class="fas fa-sun"></i>
+                            <span>Desert camping under the stars</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectOption(1, 'beach')">
+                            <i class="fas fa-water"></i>
+                            <span>Beach relaxation by the ocean</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectOption(1, 'city')">
+                            <i class="fas fa-city"></i>
+                            <span>Fine dining in the city</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectOption(1, 'home')">
+                            <i class="fas fa-home"></i>
+                            <span>Cozy evening at home</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quiz-result" id="quizResult">
+                <h3 style="font-size: 2rem; font-weight: 300; margin-bottom: 1rem;">Your Perfect Match</h3>
+                <p style="color: var(--text-light); margin-bottom: 2rem;">Based on your answers, we recommend:</p>
+                <div class="quiz-recommendations" id="quizRecommendations"></div>
+                <button class="btn" style="margin-top: 2rem;" onclick="resetQuiz()">
+                    <i class="fas fa-redo"></i> Start Over
+                </button>
+            </div>
         </div>
     </section>
 
     <!-- Products Section -->
-    <section id="collection">
-        <div class="section-title">
+    <section class="products-section" id="collection">
+        <div class="section-header">
             <h2>Our Collection</h2>
             <div class="section-line"></div>
             <p>Handcrafted Elegance in Every Bottle</p>
         </div>
         
-        <div class="products-grid" id="productsGrid">
-            <!-- Products loaded from JS -->
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterProducts('all')">All</button>
+            <button class="filter-tab" onclick="filterProducts('oud')">Oud</button>
+            <button class="filter-tab" onclick="filterProducts('floral')">Floral</button>
+            <button class="filter-tab" onclick="filterProducts('fresh')">Fresh</button>
+            <button class="filter-tab" onclick="filterProducts('oriental')">Oriental</button>
+        </div>
+        
+        <div class="products-grid" id="productsGrid"></div>
+        
+        <!-- Sample Set Builder -->
+        <div class="sample-builder">
+            <h3>Create Your Discovery Set</h3>
+            <p>Choose any 3 samples for only OMR 15.000</p>
+            <div class="sample-slots" id="sampleSlots">
+                <div class="sample-slot" data-slot="0">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="sample-slot" data-slot="1">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="sample-slot" data-slot="2">
+                    <i class="fas fa-plus"></i>
+                </div>
+            </div>
+            <div class="sample-price">OMR 15.000 <span style="text-decoration: line-through; color: var(--text-muted); font-size: 1rem;">OMR 24.000</span></div>
+            <button class="btn" onclick="addSampleSetToCart()">
+                <i class="fas fa-shopping-bag"></i> Add Discovery Set
+            </button>
+        </div>
+    </section>
+
+    <!-- Pairing Guide -->
+    <section class="pairing-section" id="pairing">
+        <div class="section-header">
+            <h2>Scent Pairing Guide</h2>
+            <div class="section-line"></div>
+            <p>Find the perfect fragrance for every occasion</p>
+        </div>
+        
+        <div class="pairing-grid">
+            <div class="pairing-card" onclick="filterProducts('fresh')">
+                <i class="fas fa-sun"></i>
+                <h4>Summer Days</h4>
+                <p>Light, fresh, aquatic notes perfect for hot weather</p>
+            </div>
+            <div class="pairing-card" onclick="filterProducts('oud')">
+                <i class="fas fa-moon"></i>
+                <h4>Evening Events</h4>
+                <p>Rich oud and amber for special occasions</p>
+            </div>
+            <div class="pairing-card" onclick="filterProducts('floral')">
+                <i class="fas fa-heart"></i>
+                <h4>Romantic Dates</h4>
+                <p>Romantic florals that leave lasting impressions</p>
+            </div>
+            <div class="pairing-card" onclick="filterProducts('oriental')">
+                <i class="fas fa-briefcase"></i>
+                <h4>Professional</h4>
+                <p>Subtle, sophisticated scents for the workplace</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Memory Wall -->
+    <section class="memory-section" id="memory">
+        <div class="section-header">
+            <h2>Scent Stories</h2>
+            <div class="section-line"></div>
+            <p>Memories our customers have shared</p>
+        </div>
+        
+        <div class="memory-grid" id="memoryGrid"></div>
+    </section>
+
+    <!-- Virtual Unboxing -->
+    <section class="unboxing-section" id="unboxing">
+        <div class="section-header">
+            <h2>The Zarafet Experience</h2>
+            <div class="section-line"></div>
+            <p>Click to unveil what awaits inside every package</p>
+        </div>
+        
+        <div class="unboxing-stage">
+            <div class="package" onclick="openPackage()">
+                <div class="package-ribbon">
+                    <i class="fas fa-gift"></i>
+                </div>
+            </div>
+            <p style="margin-top: 1rem; color: var(--text-muted);">Click to unbox</p>
+            
+            <div class="package-contents" id="packageContents">
+                <div class="content-item">
+                    <i class="fas fa-spray-can"></i>
+                    <p>Your Perfume</p>
+                </div>
+                <div class="content-item">
+                    <i class="fas fa-scroll"></i>
+                    <p>Scent Guide</p>
+                </div>
+                <div class="content-item">
+                    <i class="fas fa-gift"></i>
+                    <p>Samples</p>
+                </div>
+                <div class="content-item">
+                    <i class="fas fa-envelope"></i>
+                    <p>Handwritten Note</p>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section class="about" id="about">
+    <section class="about-section" id="about">
         <div class="about-content">
             <div class="about-image">
-                <i class="fas fa-spray-can"></i>
+                <i class="fas fa-spray-can" style="font-size: 8rem; color: var(--bronze); opacity: 0.3;"></i>
             </div>
             
             <div class="about-text">
                 <h3>Crafting <span>Memories</span> Through Scent</h3>
                 <p>Welcome to Zarafet Perfumes, where fragrance becomes an art form. Each perfume in our collection is carefully selected to evoke emotions, create lasting impressions, and become an extension of your personality.</p>
-                <p>We believe that the right fragrance is more than just a scent—it's a statement, a memory, a signature that precedes you and lingers after you've gone.</p>
+                <p>We believe that the right fragrance is more than just a scent—it's a statement, a memory, a signature that precedes you and lingers after you've gone. Our perfumes are crafted using the finest ingredients from around the world.</p>
                 
-                <div class="features">
-                    <div class="feature">
-                        <i class="fas fa-leaf"></i>
-                        <span>Premium Ingredients</span>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <h4>50+</h4>
+                        <span>Unique Scents</span>
                     </div>
-                    <div class="feature">
-                        <i class="fas fa-shipping-fast"></i>
-                        <span>Fast Delivery</span>
+                    <div class="stat-item">
+                        <h4>1000+</h4>
+                        <span>Happy Customers</span>
                     </div>
-                    <div class="feature">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Authentic Guarantee</span>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-gift"></i>
-                        <span>Elegant Packaging</span>
+                    <div class="stat-item">
+                        <h4>5★</h4>
+                        <span>Average Rating</span>
                     </div>
                 </div>
             </div>
@@ -931,11 +1983,11 @@
     </section>
 
     <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <div class="section-title">
+    <section class="contact-section" id="contact">
+        <div class="section-header">
             <h2>Get In Touch</h2>
             <div class="section-line"></div>
-            <p>We're Here to Help You Find Your Perfect Scent</p>
+            <p>We're here to help you find your perfect scent</p>
         </div>
         
         <div class="contact-grid">
@@ -947,7 +1999,7 @@
             <div class="contact-card">
                 <i class="fas fa-envelope"></i>
                 <h4>Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee9d81809cc0888389ae89838f8782c08d8183">[email&#160;protected]</a></p>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a8dbc7c6da86cec5cfe8cfc5c9c1c486cbc7c5">[email&#160;protected]</a></p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-map-marker-alt"></i>
@@ -957,12 +2009,12 @@
         </div>
     </section>
 
-    <!-- Newsletter Section -->
-    <section class="newsletter">
+    <!-- Newsletter -->
+    <section class="newsletter-section">
         <div class="newsletter-content">
-            <h3>Stay Inspired</h3>
+            <h3>Join the Zarafet Family</h3>
             <p>Subscribe for exclusive offers, new arrivals, and fragrance stories from our atelier.</p>
-            <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Thank you for subscribing!');">
+            <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Welcome to the family! Check your email.');">
                 <input type="email" placeholder="Enter your email" required>
                 <button type="submit">Subscribe <i class="fas fa-arrow-right"></i></button>
             </form>
@@ -974,32 +2026,34 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <h4>Zarafet Perfumes</h4>
-                <p>Handcrafted luxury fragrances made with premium ingredients, designed to become your signature scent.</p>
+                <p>Handcrafted luxury fragrances made with premium ingredients, designed to become your signature scent. Experience the art of Arabian perfumery.</p>
                 <div class="footer-social">
                     <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#"><i class="fab fa-snapchat"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
             
             <div class="footer-column">
                 <h5>Shop</h5>
                 <ul>
-                    <li><a href="#">All Fragrances</a></li>
-                    <li><a href="#">For Him</a></li>
-                    <li><a href="#">For Her</a></li>
+                    <li><a href="#collection">All Fragrances</a></li>
+                    <li><a href="#" onclick="filterProducts('oud'); return false;">Oud Collection</a></li>
+                    <li><a href="#" onclick="filterProducts('floral'); return false;">Floral Scents</a></li>
+                    <li><a href="#" onclick="filterProducts('fresh'); return false;">Fresh & Clean</a></li>
                     <li><a href="#">Gift Sets</a></li>
                 </ul>
             </div>
             
             <div class="footer-column">
-                <h5>Company</h5>
+                <h5>Discover</h5>
                 <ul>
+                    <li><a href="#quiz">Scent Quiz</a></li>
+                    <li><a href="#pairing">Pairing Guide</a></li>
+                    <li><a href="#memory">Customer Stories</a></li>
                     <li><a href="#about">Our Story</a></li>
-                    <li><a href="#">Sustainability</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Blog</a></li>
                 </ul>
             </div>
             
@@ -1008,23 +2062,20 @@
                 <ul>
                     <li><a href="#contact">Contact Us</a></li>
                     <li><a href="#">FAQs</a></li>
-                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Shipping Info</a></li>
                     <li><a href="#">Returns</a></li>
+                    <li><a href="#">Track Order</a></li>
                 </ul>
             </div>
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; 2024 Zarafet Perfumes. All Rights Reserved.</p>
-            <div class="footer-links">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-            </div>
+            <p>&copy; 2024 Zarafet Perfumes. All Rights Reserved. Crafted with <i class="fas fa-heart" style="color: var(--bronze);"></i> in Muscat</p>
         </div>
     </footer>
 
     <!-- Cart Sidebar -->
-    <div class="overlay" id="overlay" onclick="toggleCart()"></div>
+    <div class="overlay" id="overlay" onclick="closeSidebars()"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <h3><i class="fas fa-shopping-bag"></i> Your Cart</h3>
@@ -1033,9 +2084,7 @@
             </button>
         </div>
         
-        <div class="cart-items" id="cartItems">
-            <!-- Cart items loaded here -->
-        </div>
+        <div class="cart-items" id="cartItems"></div>
         
         <div class="cart-footer">
             <div class="cart-total">
@@ -1048,98 +2097,684 @@
         </div>
     </div>
 
+    <!-- Wishlist Sidebar -->
+    <div class="wishlist-sidebar" id="wishlistSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-heart"></i> Your Wishlist</h3>
+            <button class="close-cart" onclick="toggleWishlist()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="wishlistItems">
+            <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                <i class="fas fa-heart" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+                <p>Your wishlist is empty</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
-    <div class="toast" id="toast"></div>
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><script>
         // ============================================
-        // PRODUCT DATA
+        // PRODUCT DATA WITH ENHANCED INFO
         // ============================================
         const products = [
             {
                 id: 1,
-                brand: "Zarafet Perfumes",
+                brand: "Zarafet",
                 name: "Midnight Oud",
-                description: "A rich, mysterious blend of Oud wood, amber, and spices. Perfect for evening occasions.",
+                description: "A rich, mysterious blend of Oud wood, amber, and exotic spices. Perfect for evening occasions and special moments.",
                 price: 45.000,
                 size: "100ml",
-                notes: ["Oud", "Amber", "Spice"],
+                category: "oud",
+                notes: ["Oud", "Amber", "Spice", "Sandalwood"],
                 badge: "Bestseller",
-                image: null
+                image: null,
+                pyramid: {
+                    top: "Saffron, Cardamom",
+                    heart: "Oud Wood, Cedar",
+                    base: "Amber, Vanilla, Musk"
+                },
+                story: "Inspired by the mystical nights of the Arabian desert, where ancient traders once journeyed under starlit skies.",
+                pairing: "Evening events, special occasions, winter nights"
             },
             {
                 id: 2,
-                brand: "Zarafet Perfumes",
+                brand: "Zarafet",
                 name: "Desert Rose",
-                description: "Delicate rose petals blended with saffron and sandalwood. An elegant floral masterpiece.",
+                description: "Delicate rose petals blended with saffron and sandalwood. An elegant floral masterpiece that embodies grace.",
                 price: 38.000,
                 size: "100ml",
-                notes: ["Rose", "Saffron", "Sandalwood"],
+                category: "floral",
+                notes: ["Rose", "Saffron", "Sandalwood", "Peony"],
                 badge: "New",
-                image: null
+                image: null,
+                pyramid: {
+                    top: "Bulgarian Rose, Bergamot",
+                    heart: "Saffron, Peony",
+                    base: "Sandalwood, Musk"
+                },
+                story: "A tribute to the resilient roses that bloom in the harshest desert conditions, symbolizing strength and beauty.",
+                pairing: "Romantic dinners, daytime elegance, spring occasions"
             },
             {
                 id: 3,
-                brand: "Zarafet Perfumes",
+                brand: "Zarafet",
                 name: "Royal Musk",
-                description: "Pure white musk with hints of vanilla and citrus. Clean, fresh, and long-lasting.",
+                description: "Pure white musk with hints of vanilla and citrus. Clean, fresh, and elegantly long-lasting.",
                 price: 32.000,
                 size: "100ml",
-                notes: ["Musk", "Vanilla", "Citrus"],
+                category: "fresh",
+                notes: ["Musk", "Vanilla", "Citrus", "White Flowers"],
                 badge: null,
-                image: null
+                image: null,
+                pyramid: {
+                    top: "Lemon, Bergamot",
+                    heart: "White Musk, Jasmine",
+                    base: "Vanilla, Cedar"
+                },
+                story: "The signature scent of royalty, refined over generations to create the perfect balance of purity and allure.",
+                pairing: "Daily wear, professional settings, summer days"
             },
             {
                 id: 4,
-                brand: "Zarafet Perfumes",
+                brand: "Zarafet",
                 name: "Sultan's Treasure",
-                description: "An exotic fusion of frankincense, myrrh, and precious woods. Truly majestic.",
+                description: "An exotic fusion of frankincense, myrrh, and precious woods. Truly majestic and commanding.",
                 price: 55.000,
                 size: "100ml",
-                notes: ["Frankincense", "Myrrh", "Wood"],
+                category: "oriental",
+                notes: ["Frankincense", "Myrrh", "Agarwood", "Gold"],
                 badge: "Premium",
-                image: null
+                image: null,
+                pyramid: {
+                    top: "Frankincense, Bergamot",
+                    heart: "Myrrh, Agarwood",
+                    base: "Amber, Precious Woods"
+                },
+                story: "Crafted from the finest ingredients once reserved for sultans and royalty. A scent of true distinction.",
+                pairing: "Important meetings, celebrations, making an impression"
             },
             {
                 id: 5,
-                brand: "Zarafet Perfumes",
+                brand: "Zarafet",
                 name: "Ocean Breeze",
                 description: "Fresh aquatic notes combined with sea salt and driftwood. Refreshing and modern.",
                 price: 28.000,
                 size: "100ml",
-                notes: ["Aquatic", "Sea Salt", "Cedar"],
+                category: "fresh",
+                notes: ["Aquatic", "Sea Salt", "Cedar", "Citrus"],
                 badge: null,
-                image: null
+                image: null,
+                pyramid: {
+                    top: "Sea Salt, Lemon",
+                    heart: "Marine Notes, Lavender",
+                    base: "Driftwood, Cedar"
+                },
+                story: "Capturing the essence of Oman's pristine coastline, where the Arabian Sea meets golden sands.",
+                pairing: "Casual outings, gym, hot summer days"
             },
             {
                 id: 6,
-                brand: "Zarafet Perfumes",
+                brand: "Zarafet",
                 name: "Golden Amber",
                 description: "Warm amber resin with honey and benzoin. Sweet, cozy, and captivating.",
                 price: 42.000,
                 size: "100ml",
-                notes: ["Amber", "Honey", "Benzoin"],
+                category: "oriental",
+                notes: ["Amber", "Honey", "Benzoin", "Vanilla"],
                 badge: "Popular",
-                image: null
+                image: null,
+                pyramid: {
+                    top: "Honey, Cinnamon",
+                    heart: "Amber, Benzoin",
+                    base: "Vanilla, Tonka Bean"
+                },
+                story: "The warmth of golden amber captures the magic of Arabian sunsets over endless dunes.",
+                pairing: "Cozy evenings, date nights, autumn days"
+            },
+            {
+                id: 7,
+                brand: "Zarafet",
+                name: "Sacred Sandalwood",
+                description: "Pure Indian sandalwood enhanced with subtle spices. Meditative and grounding.",
+                price: 48.000,
+                size: "100ml",
+                category: "oud",
+                notes: ["Sandalwood", "Spice", "Cream", "Wood"],
+                badge: null,
+                image: null,
+                pyramid: {
+                    top: "Cardamom, Nutmeg",
+                    heart: "Indian Sandalwood",
+                    base: "Cream, Woody Notes"
+                },
+                story: "Sourced from the finest Mysore sandalwood, traditionally used in sacred ceremonies for its calming properties.",
+                pairing: "Meditation, yoga, mindful moments"
+            },
+            {
+                id: 8,
+                brand: "Zarafet",
+                name: "Jasmine Dreams",
+                description: "Intoxicating jasmine blossom with hints of neroli and orange blossom.",
+                price: 35.000,
+                size: "100ml",
+                category: "floral",
+                notes: ["Jasmine", "Neroli", "Orange Blossom", "Ylang"],
+                badge: null,
+                image: null,
+                pyramid: {
+                    top: "Neroli, Bergamot",
+                    heart: "Jasmine, Ylang Ylang",
+                    base: "Orange Blossom, Musk"
+                },
+                story: "The jasmine flowers are hand-picked at dawn when their scent is most potent, creating an intoxicating floral experience.",
+                pairing: "Weddings, garden parties, feminine elegance"
+            }
+        ];
+
+        const memories = [
+            {
+                name: "Aisha M.",
+                location: "Muscat",
+                text: "Midnight Oud reminds me of my grandmother's garden during Eid. Every time I wear it, I'm transported back to those cherished family gatherings.",
+                product: "Midnight Oud",
+                date: "2 weeks ago"
+            },
+            {
+                name: "Khalid R.",
+                location: "Dubai",
+                text: "I bought Desert Rose for my wife's birthday. She absolutely loves it! Now it's her signature scent. The packaging was beautiful too.",
+                product: "Desert Rose",
+                date: "1 month ago"
+            },
+            {
+                name: "Fatima S.",
+                location: "Salalah",
+                text: "Royal Musk is my daily companion. It's subtle enough for work but elegant enough for evening. I've received so many compliments!",
+                product: "Royal Musk",
+                date: "3 weeks ago"
+            },
+            {
+                name: "Ahmed H.",
+                location: "Muscat",
+                text: "The sample set was perfect for finding my scent. Ended up buying the full size of Sultan's Treasure. Best purchase this year!",
+                product: "Discovery Set",
+                date: "1 week ago"
+            },
+            {
+                name: "Mariam A.",
+                location: "Sohar",
+                text: "Golden Amber has become my winter staple. The warmth and sweetness is exactly what I need on cool evenings.",
+                product: "Golden Amber",
+                date: "2 months ago"
+            },
+            {
+                name: "Yusuf K.",
+                location: "Nizwa",
+                text: "Bought Ocean Breeze for my gym bag. Clean, fresh, and lasts all day. The scent reminds me of the beach at Shatti Al Qurum.",
+                product: "Ocean Breeze",
+                date: "3 weeks ago"
             }
         ];
 
         // ============================================
-        // SHOPPING CART
+        // STATE MANAGEMENT
         // ============================================
         let cart = JSON.parse(localStorage.getItem('zarafetCart')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('zarafetWishlist')) || [];
+        let sampleSet = [null, null, null];
+        let currentQuizStep = 1;
+        let quizAnswers = {};
 
-        function saveCart() {
-            localStorage.setItem('zarafetCart', JSON.stringify(cart));
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hide loader
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1500);
+
+            // Initialize custom cursor
+            initCursor();
+
+            // Create particles
+            createParticles();
+
+            // Render products
+            renderProducts();
+
+            // Render memories
+            renderMemories();
+
+            // Update UI
             updateCartUI();
+            updateWishlistUI();
+
+            // Scroll animations
+            initScrollAnimations();
+
+            // Header scroll effect
+            window.addEventListener('scroll', () => {
+                const header = document.getElementById('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        });
+
+        // ============================================
+        // CUSTOM CURSOR
+        // ============================================
+        function initCursor() {
+            if (window.matchMedia('(pointer: coarse)').matches) return;
+
+            const cursor = document.getElementById('cursor');
+            let mouseX = 0, mouseY = 0;
+            let cursorX = 0, cursorY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function animateCursor() {
+                cursorX += (mouseX - cursorX) * 0.1;
+                cursorY += (mouseY - cursorY) * 0.1;
+                cursor.style.left = cursorX - 10 + 'px';
+                cursor.style.top = cursorY - 10 + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Hover effects
+            document.querySelectorAll('a, button, .product-card, .quiz-option').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
         }
 
+        // ============================================
+        // PARTICLES
+        // ============================================
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // ============================================
+        // THEME TOGGLE
+        // ============================================
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('themeIcon').className = 'fas fa-sun';
+        }
+
+        // ============================================
+        // QUIZ LOGIC
+        // ============================================
+        const quizQuestions = [
+            {
+                step: 2,
+                question: "Which scent family speaks to you?",
+                subtitle: "Trust your instinct",
+                options: [
+                    { value: "woody", icon: "fa-tree", text: "Warm Woods & Oud" },
+                    { value: "floral", icon: "fa-seedling", text: "Fresh Flowers" },
+                    { value: "fresh", icon: "fa-water", text: "Clean & Aquatic" },
+                    { value: "oriental", icon: "fa-fire", text: "Spicy & Oriental" }
+                ]
+            },
+            {
+                step: 3,
+                question: "When do you wear perfume most?",
+                subtitle: "Choose your primary occasion",
+                options: [
+                    { value: "daily", icon: "fa-sun", text: "Daily / Work" },
+                    { value: "evening", icon: "fa-moon", text: "Evening Events" },
+                    { value: "special", icon: "fa-gem", text: "Special Occasions" },
+                    { value: "all", icon: "fa-clock", text: "All the time" }
+                ]
+            },
+            {
+                step: 4,
+                question: "What's your personality type?",
+                subtitle: "This helps us match your vibe",
+                options: [
+                    { value: "bold", icon: "fa-crown", text: "Bold & Confident" },
+                    { value: "elegant", icon: "fa-feather", text: "Elegant & Refined" },
+                    { value: "playful", icon: "fa-smile", text: "Playful & Fun" },
+                    { value: "mysterious", icon: "fa-mask", text: "Mysterious & Intriguing" }
+                ]
+            },
+            {
+                step: 5,
+                question: "Which season do you love most?",
+                subtitle: "Scents change with the seasons",
+                options: [
+                    { value: "spring", icon: "fa-leaf", text: "Spring" },
+                    { value: "summer", icon: "fa-sun", text: "Summer" },
+                    { value: "autumn", icon: "fa-leaf", text: "Autumn" },
+                    { value: "winter", icon: "fa-snowflake", text: "Winter" }
+                ]
+            }
+        ];
+
+        function selectOption(step, value) {
+            quizAnswers[step] = value;
+            
+            // Update step indicator
+            document.getElementById(`step${step}`).classList.add('completed');
+            document.getElementById(`step${step}`).classList.remove('active');
+            document.getElementById(`step${step}`).innerHTML = '<i class="fas fa-check"></i>';
+            
+            if (step < 5) {
+                document.getElementById(`step${step + 1}`).classList.add('active');
+                showQuestion(step);
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuestion(step) {
+            const question = quizQuestions[step - 1];
+            const content = document.getElementById('quizContent');
+            
+            content.innerHTML = `
+                <div class="quiz-question" data-step="${question.step}" style="animation: fadeInUp 0.5s;">
+                    <h3>${question.question}</h3>
+                    <p>${question.subtitle}</p>
+                    <div class="quiz-options">
+                        ${question.options.map(opt => `
+                            <div class="quiz-option" onclick="selectOption(${question.step}, '${opt.value}')">
+                                <i class="fas ${opt.icon}"></i>
+                                <span>${opt.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('quizResult').classList.add('show');
+            
+            // Simple recommendation logic
+            const category = quizAnswers[2] || 'all';
+            const personality = quizAnswers[4] || 'all';
+            
+            let recommendations = products.filter(p => {
+                if (category !== 'all' && p.category === category) return true;
+                if (personality === 'bold' && (p.category === 'oud' || p.category === 'oriental')) return true;
+                if (personality === 'elegant' && (p.category === 'floral' || p.category === 'oud')) return true;
+                if (personality === 'playful' && p.category === 'fresh') return true;
+                if (personality === 'mysterious' && p.category === 'oud') return true;
+                return false;
+            });
+            
+            if (recommendations.length === 0) {
+                recommendations = products.slice(0, 3);
+            } else if (recommendations.length > 3) {
+                recommendations = recommendations.slice(0, 3);
+            }
+            
+            const container = document.getElementById('quizRecommendations');
+            container.innerHTML = recommendations.map(p => `
+                <div class="product-card" style="text-align: left;">
+                    <div class="product-image" style="height: 250px;">
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fas fa-spray-can product-placeholder"></i>`}
+                    </div>
+                    <div class="product-info" style="padding: 1.5rem;">
+                        <div class="product-name" style="font-size: 1.3rem;">${p.name}</div>
+                        <p style="font-size: 0.85rem; color: var(--text-light); margin: 0.5rem 0;">${p.notes.slice(0, 3).join(' • ')}</p>
+                        <div class="product-price">OMR ${p.price.toFixed(3)}</div>
+                        <button class="add-to-cart" style="width: 100%; margin-top: 1rem;" onclick="addToCart(${p.id}); resetQuiz();">
+                            <i class="fas fa-shopping-bag"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function resetQuiz() {
+            currentQuizStep = 1;
+            quizAnswers = {};
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('quizResult').classList.remove('show');
+            
+            // Reset steps
+            for (let i = 1; i <= 5; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.classList.remove('completed', 'active');
+                step.innerHTML = i;
+            }
+            document.getElementById('step1').classList.add('active');
+            
+            // Reset content to first question
+            document.getElementById('quizContent').innerHTML = `
+                <div class="quiz-question" data-step="1">
+                    <h3>What's your ideal weekend?</h3>
+                    <p>Choose the activity that speaks to your soul</p>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectOption(1, 'desert')">
+                            <i class="fas fa-sun"></i>
+                            <span>Desert camping under the stars</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectOption(1, 'beach')">
+                            <i class="fas fa-water"></i>
+                            <span>Beach relaxation by the ocean</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectOption(1, 'city')">
+                            <i class="fas fa-city"></i>
+                            <span>Fine dining in the city</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectOption(1, 'home')">
+                            <i class="fas fa-home"></i>
+                            <span>Cozy evening at home</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // PRODUCT RENDERING
+        // ============================================
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('productsGrid');
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+            
+            grid.innerHTML = filtered.map(p => `
+                <div class="product-card" data-category="${p.category}">
+                    <div class="product-image">
+                        ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fas fa-spray-can product-placeholder"></i>`}
+                        
+                        <div class="product-actions">
+                            <button class="action-btn ${isInWishlist(p.id) ? 'wishlisted' : ''}" onclick="toggleWishlistItem(${p.id})" title="${isInWishlist(p.id) ? 'Remove from' : 'Add to'} Wishlist">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                            <button class="action-btn" onclick="addToSampleSet(${p.id})" title="Add to Discovery Set">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-brand">${p.brand}</div>
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-description">${p.description}</p>
+                        
+                        <div class="fragrance-pyramid">
+                            <div class="pyramid-title">Fragrance Pyramid</div>
+                            <div class="pyramid-levels">
+                                <div class="pyramid-level" title="First impression - lasts 15 minutes">
+                                    <i class="fas fa-wind"></i>
+                                    <span><strong>Top:</strong> ${p.pyramid.top}</span>
+                                </div>
+                                <div class="pyramid-level" title="The heart - lasts 3-5 hours">
+                                    <i class="fas fa-heart"></i>
+                                    <span><strong>Heart:</strong> ${p.pyramid.heart}</span>
+                                </div>
+                                <div class="pyramid-level" title="The foundation - lasts all day">
+                                    <i class="fas fa-mountain"></i>
+                                    <span><strong>Base:</strong> ${p.pyramid.base}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="product-notes">
+                            ${p.notes.map(note => `<span class="note-tag">${note}</span>`).join('')}
+                        </div>
+                        
+                        <div class="product-footer">
+                            <div class="product-price">
+                                OMR ${p.price.toFixed(3)}
+                                <span>/ ${p.size}</span>
+                            </div>
+                            <button class="add-to-cart" onclick="addToCart(${p.id})">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProducts(category) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Re-render with filter
+            renderProducts(category);
+            
+            // Scroll to products
+            document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderMemories() {
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = memories.map(m => `
+                <div class="memory-card">
+                    <div class="memory-header">
+                        <div class="memory-avatar">${m.name.charAt(0)}</div>
+                        <div class="memory-meta">
+                            <h5>${m.name}</h5>
+                            <span>${m.location} • ${m.date}</span>
+                        </div>
+                    </div>
+                    <p class="memory-content">"${m.text}"</p>
+                    <div class="memory-product">
+                        <i class="fas fa-spray-can"></i> ${m.product}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // SAMPLE SET BUILDER
+        // ============================================
+        function addToSampleSet(productId) {
+            const product = products.find(p => p.id === productId);
+            const emptySlot = sampleSet.findIndex(s => s === null);
+            
+            if (emptySlot === -1) {
+                showToast('Sample set is full! Remove one first.');
+                return;
+            }
+            
+            sampleSet[emptySlot] = product;
+            updateSampleSlots();
+            showToast(`${product.name} added to discovery set!`);
+        }
+
+        function removeFromSampleSet(index) {
+            sampleSet[index] = null;
+            updateSampleSlots();
+        }
+
+        function updateSampleSlots() {
+            const slots = document.querySelectorAll('.sample-slot');
+            slots.forEach((slot, i) => {
+                if (sampleSet[i]) {
+                    slot.classList.add('filled');
+                    slot.innerHTML = `
+                        ${sampleSet[i].image ? `<img src="${sampleSet[i].image}" alt="${sampleSet[i].name}">` : `<i class="fas fa-spray-can" style="color: var(--bronze);"></i>`}
+                        <button class="remove-sample" onclick="removeFromSampleSet(${i})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                } else {
+                    slot.classList.remove('filled');
+                    slot.innerHTML = '<i class="fas fa-plus"></i>';
+                }
+            });
+        }
+
+        function addSampleSetToCart() {
+            const filled = sampleSet.filter(s => s !== null);
+            if (filled.length === 0) {
+                showToast('Please add at least one sample!');
+                return;
+            }
+            
+            cart.push({
+                id: 'sample-set',
+                name: `Discovery Set (${filled.length} samples)`,
+                price: 15.000,
+                quantity: 1,
+                samples: filled.map(s => s.name)
+            });
+            
+            saveCart();
+            showToast('Discovery set added to cart!');
+            
+            // Clear sample set
+            sampleSet = [null, null, null];
+            updateSampleSlots();
+        }
+
+        // ============================================
+        // CART & WISHLIST
+        // ============================================
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
-            const existingItem = cart.find(item => item.id === productId);
+            const existing = cart.find(item => item.id === productId);
             
-            if (existingItem) {
-                existingItem.quantity += 1;
+            if (existing) {
+                existing.quantity += 1;
             } else {
                 cart.push({
                     id: product.id,
@@ -1158,36 +2793,96 @@
             saveCart();
         }
 
+        function toggleWishlistItem(productId) {
+            const index = wishlist.findIndex(w => w.id === productId);
+            const product = products.find(p => p.id === productId);
+            
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                showToast(`${product.name} removed from wishlist`);
+            } else {
+                wishlist.push({ id: product.id, name: product.name, price: product.price });
+                showToast(`${product.name} added to wishlist!`);
+            }
+            
+            localStorage.setItem('zarafetWishlist', JSON.stringify(wishlist));
+            updateWishlistUI();
+            renderProducts(); // Re-render to update heart icons
+        }
+
+        function isInWishlist(productId) {
+            return wishlist.some(w => w.id === productId);
+        }
+
+        function saveCart() {
+            localStorage.setItem('zarafetCart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
         function updateCartUI() {
-            const cartCount = document.getElementById('cartCount');
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
+            const count = document.getElementById('cartCount');
+            const items = document.getElementById('cartItems');
+            const total = document.getElementById('cartTotal');
             
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             
-            cartCount.textContent = totalItems;
-            cartTotal.textContent = `OMR ${totalPrice.toFixed(3)}`;
+            count.textContent = totalItems;
+            total.textContent = `OMR ${totalPrice.toFixed(3)}`;
             
             if (cart.length === 0) {
-                cartItems.innerHTML = `
+                items.innerHTML = `
                     <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
-                        <i class="fas fa-shopping-bag" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+                        <i class="fas fa-shopping-bag" style="font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.5;"></i>
                         <p>Your cart is empty</p>
+                        <button class="btn" style="margin-top: 1.5rem;" onclick="toggleCart(); window.location.href='#collection';">
+                            Explore Collection
+                        </button>
                     </div>
                 `;
             } else {
-                cartItems.innerHTML = cart.map(item => `
+                items.innerHTML = cart.map(item => `
                     <div class="cart-item">
                         <div class="cart-item-image">
                             <i class="fas fa-spray-can"></i>
                         </div>
                         <div class="cart-item-details">
                             <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">OMR ${item.price.toFixed(3)} x ${item.quantity}</div>
+                            <div class="cart-item-price">OMR ${item.price.toFixed(3)} ${item.quantity > 1 ? `× ${item.quantity}` : ''}</div>
                         </div>
-                        <button class="remove-item" onclick="removeFromCart(${item.id})">
+                        <button class="remove-item" onclick="removeFromCart('${item.id}')">
                             <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function updateWishlistUI() {
+            const count = document.getElementById('wishlistCount');
+            const items = document.getElementById('wishlistItems');
+            
+            count.textContent = wishlist.length;
+            
+            if (wishlist.length === 0) {
+                items.innerHTML = `
+                    <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
+                        <i class="fas fa-heart" style="font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Your wishlist is empty</p>
+                    </div>
+                `;
+            } else {
+                items.innerHTML = wishlist.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <i class="fas fa-spray-can"></i>
+                        </div>
+                        <div class="cart-item-details">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">OMR ${item.price.toFixed(3)}</div>
+                        </div>
+                        <button class="remove-item" onclick="toggleWishlistItem(${item.id})">
+                            <i class="fas fa-times"></i>
                         </button>
                     </div>
                 `).join('');
@@ -1199,75 +2894,86 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
+        function toggleWishlist() {
+            document.getElementById('wishlistSidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function closeSidebars() {
+            document.getElementById('cartSidebar').classList.remove('open');
+            document.getElementById('wishlistSidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
         function checkout() {
             if (cart.length === 0) {
                 showToast('Your cart is empty!');
                 return;
             }
             
-            let message = "Hello! I would like to order:\n\n";
+            let message = "*Hello Zarafet Perfumes!* %0A%0AI would like to order:%0A%0A";
             let total = 0;
             
             cart.forEach(item => {
-                message += `- ${item.name} x${item.quantity} = OMR ${(item.price * item.quantity).toFixed(3)}\n`;
-                total += item.price * item.quantity;
+                const itemTotal = item.price * item.quantity;
+                message += `• *${item.name}* x${item.quantity} = OMR ${itemTotal.toFixed(3)}%0A`;
+                if (item.samples) {
+                    message += `  Samples: ${item.samples.join(', ')}%0A`;
+                }
+                total += itemTotal;
             });
             
-            message += `\nTotal: OMR ${total.toFixed(3)}`;
+            message += `%0A*Total: OMR ${total.toFixed(3)}*%0A%0AThank you!`;
             
-            const whatsappNumber = "96897407870";
-            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-            
-            window.open(whatsappUrl, '_blank');
+            window.open(`https://wa.me/96897407870?text=${message}`, '_blank');
         }
 
         // ============================================
-        // RENDER PRODUCTS
+        // UNBOXING
         // ============================================
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
+        function openPackage() {
+            const contents = document.getElementById('packageContents');
+            const pkg = document.querySelector('.package');
             
-            grid.innerHTML = products.map(product => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
-                        ${product.image 
-                            ? `<img src="${product.image}" alt="${product.name}">`
-                            : `<i class="fas fa-spray-can product-placeholder"></i>`
-                        }
-                    </div>
-                    <div class="product-info">
-                        <div class="product-brand">${product.brand}</div>
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-description">${product.description}</p>
-                        <div class="product-notes">
-                            ${product.notes.map(note => `<span class="note-tag">${note}</span>`).join('')}
-                        </div>
-                        <div class="product-footer">
-                            <div class="product-price">
-                                OMR ${product.price.toFixed(3)}
-                                <span>/ ${product.size}</span>
-                            </div>
-                            <button class="add-to-cart" onclick="addToCart(${product.id})">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            pkg.style.transform = 'scale(1.1)';
+            pkg.style.opacity = '0';
+            
+            setTimeout(() => {
+                pkg.style.display = 'none';
+                contents.classList.add('show');
+            }, 300);
         }
 
         // ============================================
-        // UTILITIES
+        // TOAST NOTIFICATION
         // ============================================
         function showToast(message) {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
+            const msg = document.getElementById('toastMessage');
+            msg.textContent = message;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Smooth scroll
+        // ============================================
+        // SCROLL ANIMATIONS
+        // ============================================
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.product-card, .memory-card, .pairing-card, .contact-card').forEach(el => {
+                el.classList.add('reveal');
+                observer.observe(el);
+            });
+        }
+
+        // Smooth scroll for nav links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1276,12 +2982,6 @@
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
-        });
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProducts();
-            updateCartUI();
         });
     </script>
 </body>
