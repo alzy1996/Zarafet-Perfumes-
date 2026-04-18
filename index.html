@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zarafet Perfumes | Discover Your Signature Scent</title>
+    <title id="pageTitle">Zarafet Perfumes | Discover Your Signature Scent</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         :root {
@@ -48,35 +52,114 @@
             font-family: 'Cormorant Garamond', serif;
         }
 
-        /* Custom Cursor */
-        .custom-cursor {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--bronze);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s, width 0.3s, height 0.3s;
-            mix-blend-mode: difference;
+        /* Custom Perfume Bottle Cursor */
+        * {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text y="20" font-size="20">🧴</text></svg>') 12 12, auto;
         }
 
-        .custom-cursor.hover {
-            width: 50px;
-            height: 50px;
-            background: rgba(139, 115, 85, 0.1);
+        a, button, .product-card, .quiz-option, .filter-tab, .action-btn, .sample-slot, .pairing-card, .memory-card, .contact-card {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text y="20" font-size="20">🧴</text></svg>') 12 12, pointer;
         }
 
-        .cursor-trail {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            background: var(--bronze);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: 0.5;
-            transition: opacity 0.3s;
+        /* RTL Support for Arabic */
+        html[dir="rtl"] body {
+            font-family: 'Noto Naskh Arabic', 'Inter', serif;
+        }
+
+        html[dir="rtl"] h1, 
+        html[dir="rtl"] h2, 
+        html[dir="rtl"] h3, 
+        html[dir="rtl"] .brand-font {
+            font-family: 'Noto Naskh Arabic', 'Cormorant Garamond', serif;
+        }
+
+        html[dir="rtl"] .nav-links {
+            flex-direction: row-reverse;
+        }
+
+        html[dir="rtl"] .hero-content h1 {
+            letter-spacing: 0;
+        }
+
+        html[dir="rtl"] .section-title h2 {
+            letter-spacing: 0;
+        }
+
+        html[dir="rtl"] .about-content {
+            direction: rtl;
+        }
+
+        html[dir="rtl"] .about-text {
+            text-align: right;
+        }
+
+        html[dir="rtl"] .features {
+            direction: rtl;
+        }
+
+        html[dir="rtl"] .contact-grid {
+            direction: rtl;
+        }
+
+        html[dir="rtl"] .footer-grid {
+            direction: rtl;
+        }
+
+        html[dir="rtl"] .footer-column ul {
+            text-align: right;
+        }
+
+        html[dir="rtl"] .product-info {
+            text-align: right;
+        }
+
+        html[dir="rtl"] .product-footer {
+            flex-direction: row-reverse;
+        }
+
+        html[dir="rtl"] .cart-item {
+            flex-direction: row-reverse;
+        }
+
+        html[dir="rtl"] .quiz-options {
+            direction: rtl;
+        }
+
+        html[dir="rtl"] .quiz-option {
+            text-align: center;
+        }
+
+        html[dir="rtl"] .reveal {
+            transform: translateX(80px);
+        }
+
+        html[dir="rtl"] .reveal.active {
+            transform: translateX(0);
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-toggle:hover {
+            border-color: var(--bronze);
+            color: var(--bronze);
+        }
+
+        .lang-toggle i {
+            font-size: 0.9rem;
         }
 
         /* Page Transition Overlay */
@@ -871,6 +954,36 @@
             border-color: var(--bronze);
             border-style: solid;
             background: var(--white);
+            animation: slot-fill 0.5s ease-out;
+        }
+
+        @keyframes slot-fill {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(139, 115, 85, 0.4); }
+            100% { transform: scale(1); }
+        }
+
+        .sample-slot.filled::after {
+            content: '✓';
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            width: 28px;
+            height: 28px;
+            background: var(--bronze);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            animation: check-pop 0.3s ease-out;
+        }
+
+        @keyframes check-pop {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         .sample-slot img {
@@ -1662,16 +1775,90 @@
             font-size: 1.2rem;
         }
 
-        /* Scroll Reveal Animation */
+        /* Scroll Reveal Animation - Left to Right with Sparks */
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-80px);
+            transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
         .reveal.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0);
+        }
+
+        .reveal::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -20px;
+            width: 4px;
+            height: 4px;
+            background: var(--bronze);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 10px var(--bronze),
+                0 0 20px var(--bronze),
+                0 0 30px var(--bronze-light);
+            opacity: 0;
+            transform: translateY(-50%);
+            transition: opacity 0.3s;
+        }
+
+        .reveal.active::before {
+            animation: sparkle-trail 0.8s ease-out forwards;
+        }
+
+        @keyframes sparkle-trail {
+            0% {
+                opacity: 1;
+                left: -20px;
+                box-shadow: 
+                    0 0 10px var(--bronze),
+                    0 0 20px var(--bronze),
+                    -5px -10px 0 -1px var(--bronze-light),
+                    5px 10px 0 -1px var(--bronze-light);
+            }
+            50% {
+                left: 50%;
+                box-shadow: 
+                    0 0 15px var(--bronze),
+                    0 0 30px var(--bronze),
+                    -8px -15px 0 -1px var(--bronze-light),
+                    8px 15px 0 -1px var(--bronze-light),
+                    -15px 5px 0 -2px var(--cream),
+                    15px -5px 0 -2px var(--cream);
+            }
+            100% {
+                opacity: 0;
+                left: 100%;
+                box-shadow: 
+                    0 0 20px var(--bronze),
+                    0 0 40px var(--bronze),
+                    -10px -20px 0 0 var(--bronze-light),
+                    10px 20px 0 0 var(--bronze-light);
+            }
+        }
+
+        /* Additional spark particles for cards */
+        .product-card.reveal.active::after,
+        .memory-card.reveal.active::after,
+        .pairing-card.reveal.active::after {
+            content: '✨';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--bronze);
+            font-size: 1rem;
+            opacity: 0;
+            animation: sparkle-fade 1.5s ease-out 0.5s forwards;
+        }
+
+        @keyframes sparkle-fade {
+            0% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+            100% { opacity: 0; transform: scale(0.5) rotate(360deg); }
         }
 
         /* Loading Animation */
@@ -1721,9 +1908,6 @@
         </div>
     </div>
 
-    <!-- Custom Cursor -->
-    <div class="custom-cursor" id="cursor"></div>
-
     <!-- Scent Particles -->
     <div class="scent-particles" id="particles"></div>
 
@@ -1736,16 +1920,20 @@
             </div>
             
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#quiz">Quiz</a></li>
-                <li><a href="#collection">Collection</a></li>
-                <li><a href="#pairing">Pairing</a></li>
-                <li><a href="#memory">Stories</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#home" data-i18n="nav.home">Home</a></li>
+                <li><a href="#quiz" data-i18n="nav.quiz">Quiz</a></li>
+                <li><a href="#collection" data-i18n="nav.collection">Collection</a></li>
+                <li><a href="#pairing" data-i18n="nav.pairing">Pairing</a></li>
+                <li><a href="#memory" data-i18n="nav.stories">Stories</a></li>
+                <li><a href="#about" data-i18n="nav.about">About</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
             </ul>
             
             <div class="nav-actions">
+                <button class="lang-toggle" onclick="toggleLanguage()" title="Switch Language">
+                    <i class="fas fa-globe"></i>
+                    <span id="langText">EN</span>
+                </button>
                 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
@@ -1764,15 +1952,19 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content">
-            <span class="hero-badge">Est. 2024 • Muscat, Oman</span>
-            <h1>Discover Your Signature Scent</h1>
-            <p>Handcrafted luxury fragrances that capture the essence of Arabian heritage blended with modern sophistication</p>
+            <span class="hero-badge" data-i18n="hero.badge">Est. 2024 • Muscat, Oman</span>
+            <h1 data-i18n="hero.title">Discover Your Signature Scent</h1>
+            <p data-i18n="hero.subtitle">Handcrafted luxury fragrances that capture the essence of Arabian heritage blended with modern sophistication</p>
             <div class="hero-buttons">
                 <a href="#quiz" class="btn">
-                    <i class="fas fa-magic"></i> Find Your Scent
+                    <i class="fas fa-magic"></i> <span data-i18n="hero.cta1">Find Your Scent</span>
                 </a>
-                <a href="#collection" class="btn btn-outline">
+                <a href="#collection" class="btn btn-outline" data-i18n="hero.cta2">
                     Explore Collection
+                </a>
+            </div>
+        </div>
+    </section>
                 </a>
             </div>
         </div>
@@ -1781,9 +1973,9 @@
     <!-- Quiz Section -->
     <section class="quiz-section" id="quiz">
         <div class="section-header">
-            <h2>Perfume Finder</h2>
+            <h2 data-i18n="quiz.title">Perfume Finder</h2>
             <div class="section-line"></div>
-            <p>Answer 5 simple questions and we'll recommend your perfect fragrance</p>
+            <p data-i18n="quiz.subtitle">Answer 5 simple questions and we'll recommend your perfect fragrance</p>
         </div>
         
         <div class="quiz-container">
@@ -1795,38 +1987,14 @@
                 <div class="quiz-step" id="step5">5</div>
             </div>
             
-            <div class="quiz-content" id="quizContent">
-                <!-- Question 1 -->
-                <div class="quiz-question" data-step="1">
-                    <h3>What's your ideal weekend?</h3>
-                    <p>Choose the activity that speaks to your soul</p>
-                    <div class="quiz-options">
-                        <div class="quiz-option" onclick="selectOption(1, 'desert')">
-                            <i class="fas fa-sun"></i>
-                            <span>Desert camping under the stars</span>
-                        </div>
-                        <div class="quiz-option" onclick="selectOption(1, 'beach')">
-                            <i class="fas fa-water"></i>
-                            <span>Beach relaxation by the ocean</span>
-                        </div>
-                        <div class="quiz-option" onclick="selectOption(1, 'city')">
-                            <i class="fas fa-city"></i>
-                            <span>Fine dining in the city</span>
-                        </div>
-                        <div class="quiz-option" onclick="selectOption(1, 'home')">
-                            <i class="fas fa-home"></i>
-                            <span>Cozy evening at home</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="quiz-content" id="quizContent"></div>
             
             <div class="quiz-result" id="quizResult">
-                <h3 style="font-size: 2rem; font-weight: 300; margin-bottom: 1rem;">Your Perfect Match</h3>
-                <p style="color: var(--text-light); margin-bottom: 2rem;">Based on your answers, we recommend:</p>
+                <h3 style="font-size: 2rem; font-weight: 300; margin-bottom: 1rem;" data-i18n="quiz.resultTitle">Your Perfect Match</h3>
+                <p style="color: var(--text-light); margin-bottom: 2rem;" data-i18n="quiz.resultSubtitle">Based on your answers, we recommend:</p>
                 <div class="quiz-recommendations" id="quizRecommendations"></div>
                 <button class="btn" style="margin-top: 2rem;" onclick="resetQuiz()">
-                    <i class="fas fa-redo"></i> Start Over
+                    <i class="fas fa-redo"></i> <span data-i18n="quiz.restart">Start Over</span>
                 </button>
             </div>
         </div>
@@ -1835,25 +2003,25 @@
     <!-- Products Section -->
     <section class="products-section" id="collection">
         <div class="section-header">
-            <h2>Our Collection</h2>
+            <h2 data-i18n="products.title">Our Collection</h2>
             <div class="section-line"></div>
-            <p>Handcrafted Elegance in Every Bottle</p>
+            <p data-i18n="products.subtitle">Handcrafted Elegance in Every Bottle</p>
         </div>
         
         <div class="filter-tabs">
-            <button class="filter-tab active" onclick="filterProducts('all')">All</button>
-            <button class="filter-tab" onclick="filterProducts('oud')">Oud</button>
-            <button class="filter-tab" onclick="filterProducts('floral')">Floral</button>
-            <button class="filter-tab" onclick="filterProducts('fresh')">Fresh</button>
-            <button class="filter-tab" onclick="filterProducts('oriental')">Oriental</button>
+            <button class="filter-tab active" onclick="filterProducts('all')" data-i18n="filter.all">All</button>
+            <button class="filter-tab" onclick="filterProducts('oud')" data-i18n="filter.oud">Oud</button>
+            <button class="filter-tab" onclick="filterProducts('floral')" data-i18n="filter.floral">Floral</button>
+            <button class="filter-tab" onclick="filterProducts('fresh')" data-i18n="filter.fresh">Fresh</button>
+            <button class="filter-tab" onclick="filterProducts('oriental')" data-i18n="filter.oriental">Oriental</button>
         </div>
         
         <div class="products-grid" id="productsGrid"></div>
         
         <!-- Sample Set Builder -->
         <div class="sample-builder">
-            <h3>Create Your Discovery Set</h3>
-            <p>Choose any 3 samples for only OMR 15.000</p>
+            <h3 data-i18n="sample.title">Create Your Discovery Set</h3>
+            <p data-i18n="sample.subtitle">Choose any 3 samples for only OMR 15.000</p>
             <div class="sample-slots" id="sampleSlots">
                 <div class="sample-slot" data-slot="0">
                     <i class="fas fa-plus"></i>
@@ -1867,7 +2035,7 @@
             </div>
             <div class="sample-price">OMR 15.000 <span style="text-decoration: line-through; color: var(--text-muted); font-size: 1rem;">OMR 24.000</span></div>
             <button class="btn" onclick="addSampleSetToCart()">
-                <i class="fas fa-shopping-bag"></i> Add Discovery Set
+                <i class="fas fa-shopping-bag"></i> <span data-i18n="sample.cta">Add Discovery Set</span>
             </button>
         </div>
     </section>
@@ -1875,20 +2043,34 @@
     <!-- Pairing Guide -->
     <section class="pairing-section" id="pairing">
         <div class="section-header">
-            <h2>Scent Pairing Guide</h2>
+            <h2 data-i18n="pairing.title">Scent Pairing Guide</h2>
             <div class="section-line"></div>
-            <p>Find the perfect fragrance for every occasion</p>
+            <p data-i18n="pairing.subtitle">Find the perfect fragrance for every occasion</p>
         </div>
         
         <div class="pairing-grid">
             <div class="pairing-card" onclick="filterProducts('fresh')">
                 <i class="fas fa-sun"></i>
-                <h4>Summer Days</h4>
-                <p>Light, fresh, aquatic notes perfect for hot weather</p>
+                <h4 data-i18n="pairing.summer">Summer Days</h4>
+                <p data-i18n="pairing.summerDesc">Light, fresh, aquatic notes perfect for hot weather</p>
             </div>
             <div class="pairing-card" onclick="filterProducts('oud')">
                 <i class="fas fa-moon"></i>
-                <h4>Evening Events</h4>
+                <h4 data-i18n="pairing.evening">Evening Events</h4>
+                <p data-i18n="pairing.eveningDesc">Rich oud and amber for special occasions</p>
+            </div>
+            <div class="pairing-card" onclick="filterProducts('floral')">
+                <i class="fas fa-heart"></i>
+                <h4 data-i18n="pairing.romantic">Romantic Dates</h4>
+                <p data-i18n="pairing.romanticDesc">Romantic florals that leave lasting impressions</p>
+            </div>
+            <div class="pairing-card" onclick="filterProducts('oriental')">
+                <i class="fas fa-briefcase"></i>
+                <h4 data-i18n="pairing.professional">Professional</h4>
+                <p data-i18n="pairing.professionalDesc">Subtle, sophisticated scents for the workplace</p>
+            </div>
+        </div>
+    </section>
                 <p>Rich oud and amber for special occasions</p>
             </div>
             <div class="pairing-card" onclick="filterProducts('floral')">
@@ -1907,9 +2089,9 @@
     <!-- Memory Wall -->
     <section class="memory-section" id="memory">
         <div class="section-header">
-            <h2>Scent Stories</h2>
+            <h2 data-i18n="memory.title">Scent Stories</h2>
             <div class="section-line"></div>
-            <p>Memories our customers have shared</p>
+            <p data-i18n="memory.subtitle">Memories our customers have shared</p>
         </div>
         
         <div class="memory-grid" id="memoryGrid"></div>
@@ -1918,9 +2100,9 @@
     <!-- Virtual Unboxing -->
     <section class="unboxing-section" id="unboxing">
         <div class="section-header">
-            <h2>The Zarafet Experience</h2>
+            <h2 data-i18n="unboxing.title">The Zarafet Experience</h2>
             <div class="section-line"></div>
-            <p>Click to unveil what awaits inside every package</p>
+            <p data-i18n="unboxing.subtitle">Click to unveil what awaits inside every package</p>
         </div>
         
         <div class="unboxing-stage">
@@ -1929,27 +2111,28 @@
                     <i class="fas fa-gift"></i>
                 </div>
             </div>
-            <p style="margin-top: 1rem; color: var(--text-muted);">Click to unbox</p>
+            <p style="margin-top: 1rem; color: var(--text-muted);" data-i18n="unboxing.click">Click to unbox</p>
             
             <div class="package-contents" id="packageContents">
                 <div class="content-item">
                     <i class="fas fa-spray-can"></i>
-                    <p>Your Perfume</p>
+                    <p data-i18n="unboxing.perfume">Your Perfume</p>
                 </div>
                 <div class="content-item">
                     <i class="fas fa-scroll"></i>
-                    <p>Scent Guide</p>
+                    <p data-i18n="unboxing.guide">Scent Guide</p>
                 </div>
                 <div class="content-item">
                     <i class="fas fa-gift"></i>
-                    <p>Samples</p>
+                    <p data-i18n="unboxing.samples">Samples</p>
                 </div>
                 <div class="content-item">
                     <i class="fas fa-envelope"></i>
-                    <p>Handwritten Note</p>
+                    <p data-i18n="unboxing.note">Handwritten Note</p>
                 </div>
             </div>
         </div>
+    </section>
     </section>
 
     <!-- About Section -->
@@ -1960,22 +2143,22 @@
             </div>
             
             <div class="about-text">
-                <h3>Crafting <span>Memories</span> Through Scent</h3>
-                <p>Welcome to Zarafet Perfumes, where fragrance becomes an art form. Each perfume in our collection is carefully selected to evoke emotions, create lasting impressions, and become an extension of your personality.</p>
-                <p>We believe that the right fragrance is more than just a scent—it's a statement, a memory, a signature that precedes you and lingers after you've gone. Our perfumes are crafted using the finest ingredients from around the world.</p>
+                <h3><span data-i18n="about.title1">Crafting</span> <span data-i18n="about.title2">Memories</span> <span data-i18n="about.title3">Through Scent</span></h3>
+                <p data-i18n="about.p1">Welcome to Zarafet Perfumes, where fragrance becomes an art form. Each perfume in our collection is carefully selected to evoke emotions, create lasting impressions, and become an extension of your personality.</p>
+                <p data-i18n="about.p2">We believe that the right fragrance is more than just a scent—it's a statement, a memory, a signature that precedes you and lingers after you've gone. Our perfumes are crafted using the finest ingredients from around the world.</p>
                 
                 <div class="stats-row">
                     <div class="stat-item">
                         <h4>50+</h4>
-                        <span>Unique Scents</span>
+                        <span data-i18n="about.stat1">Unique Scents</span>
                     </div>
                     <div class="stat-item">
                         <h4>1000+</h4>
-                        <span>Happy Customers</span>
+                        <span data-i18n="about.stat2">Happy Customers</span>
                     </div>
                     <div class="stat-item">
                         <h4>5★</h4>
-                        <span>Average Rating</span>
+                        <span data-i18n="about.stat3">Average Rating</span>
                     </div>
                 </div>
             </div>
@@ -1985,25 +2168,25 @@
     <!-- Contact Section -->
     <section class="contact-section" id="contact">
         <div class="section-header">
-            <h2>Get In Touch</h2>
+            <h2 data-i18n="contact.title">Get In Touch</h2>
             <div class="section-line"></div>
-            <p>We're here to help you find your perfect scent</p>
+            <p data-i18n="contact.subtitle">We're here to help you find your perfect scent</p>
         </div>
         
         <div class="contact-grid">
             <div class="contact-card">
                 <i class="fas fa-phone-alt"></i>
-                <h4>Phone</h4>
+                <h4 data-i18n="contact.phone">Phone</h4>
                 <p>+968 9740 7870</p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-envelope"></i>
-                <h4>Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a8dbc7c6da86cec5cfe8cfc5c9c1c486cbc7c5">[email&#160;protected]</a></p>
+                <h4 data-i18n="contact.email">Email</h4>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4e3d21203c602823290e29232f2722602d2123">[email&#160;protected]</a></p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-map-marker-alt"></i>
-                <h4>Location</h4>
+                <h4 data-i18n="contact.location">Location</h4>
                 <p>Muscat, Oman</p>
             </div>
         </div>
@@ -2012,11 +2195,11 @@
     <!-- Newsletter -->
     <section class="newsletter-section">
         <div class="newsletter-content">
-            <h3>Join the Zarafet Family</h3>
-            <p>Subscribe for exclusive offers, new arrivals, and fragrance stories from our atelier.</p>
-            <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Welcome to the family! Check your email.');">
-                <input type="email" placeholder="Enter your email" required>
-                <button type="submit">Subscribe <i class="fas fa-arrow-right"></i></button>
+            <h3 data-i18n="newsletter.title">Join the Zarafet Family</h3>
+            <p data-i18n="newsletter.subtitle">Subscribe for exclusive offers, new arrivals, and fragrance stories from our atelier.</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault(); showToast(currentLang === 'ar' ? 'مرحباً بك في العائلة! تحقق من بريدك الإلكتروني.' : 'Welcome to the family! Check your email.');">
+                <input type="email" placeholder="Enter your email" data-i18n-placeholder="newsletter.placeholder" required>
+                <button type="submit"><span data-i18n="newsletter.cta">Subscribe</span> <i class="fas fa-arrow-right"></i></button>
             </form>
         </div>
     </section>
@@ -2060,17 +2243,17 @@
             <div class="footer-column">
                 <h5>Support</h5>
                 <ul>
-                    <li><a href="#contact">Contact Us</a></li>
-                    <li><a href="#">FAQs</a></li>
-                    <li><a href="#">Shipping Info</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">Track Order</a></li>
+                    <li><a href="#contact" data-i18n="footer.contact">Contact Us</a></li>
+                    <li><a href="#" data-i18n="footer.faqs">FAQs</a></li>
+                    <li><a href="#" data-i18n="footer.shipping">Shipping Info</a></li>
+                    <li><a href="#" data-i18n="footer.returns">Returns</a></li>
+                    <li><a href="#" data-i18n="footer.track">Track Order</a></li>
                 </ul>
             </div>
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; 2024 Zarafet Perfumes. All Rights Reserved. Crafted with <i class="fas fa-heart" style="color: var(--bronze);"></i> in Muscat</p>
+            <p>&copy; 2024 Zarafet Perfumes. <span data-i18n="footer.rights">All Rights Reserved</span>. <span data-i18n="footer.crafted">Crafted with</span> <i class="fas fa-heart" style="color: var(--bronze);"></i> <span data-i18n="footer.muscat">in Muscat</span></p>
         </div>
     </footer>
 
@@ -2078,7 +2261,7 @@
     <div class="overlay" id="overlay" onclick="closeSidebars()"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
-            <h3><i class="fas fa-shopping-bag"></i> Your Cart</h3>
+            <h3><i class="fas fa-shopping-bag"></i> <span data-i18n="cart.title">Your Cart</span></h3>
             <button class="close-cart" onclick="toggleCart()">
                 <i class="fas fa-times"></i>
             </button>
@@ -2088,11 +2271,11 @@
         
         <div class="cart-footer">
             <div class="cart-total">
-                <span>Total:</span>
+                <span data-i18n="cart.total">Total:</span>
                 <span id="cartTotal">OMR 0.000</span>
             </div>
             <button class="checkout-btn" onclick="checkout()">
-                <i class="fab fa-whatsapp"></i> Order via WhatsApp
+                <i class="fab fa-whatsapp"></i> <span data-i18n="cart.checkout">Order via WhatsApp</span>
             </button>
         </div>
     </div>
@@ -2100,7 +2283,7 @@
     <!-- Wishlist Sidebar -->
     <div class="wishlist-sidebar" id="wishlistSidebar">
         <div class="cart-header">
-            <h3><i class="fas fa-heart"></i> Your Wishlist</h3>
+            <h3><i class="fas fa-heart"></i> <span data-i18n="wishlist.title">Your Wishlist</span></h3>
             <button class="close-cart" onclick="toggleWishlist()">
                 <i class="fas fa-times"></i>
             </button>
@@ -2108,7 +2291,7 @@
         <div class="cart-items" id="wishlistItems">
             <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
                 <i class="fas fa-heart" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
-                <p>Your wishlist is empty</p>
+                <p data-i18n="wishlist.empty">Your wishlist is empty</p>
             </div>
         </div>
     </div>
@@ -2324,6 +2507,414 @@
         ];
 
         // ============================================
+        // TRANSLATIONS
+        // ============================================
+        const translations = {
+            en: {
+                nav: {
+                    home: "Home",
+                    quiz: "Quiz",
+                    collection: "Collection",
+                    pairing: "Pairing",
+                    stories: "Stories",
+                    about: "About",
+                    contact: "Contact"
+                },
+                hero: {
+                    badge: "Est. 2024 • Muscat, Oman",
+                    title: "Discover Your Signature Scent",
+                    subtitle: "Handcrafted luxury fragrances that capture the essence of Arabian heritage blended with modern sophistication",
+                    cta1: "Find Your Scent",
+                    cta2: "Explore Collection"
+                },
+                quiz: {
+                    title: "Perfume Finder",
+                    subtitle: "Answer 5 simple questions and we'll recommend your perfect fragrance",
+                    resultTitle: "Your Perfect Match",
+                    resultSubtitle: "Based on your answers, we recommend:",
+                    restart: "Start Over",
+                    q1: "What's your ideal weekend?",
+                    q1Sub: "Choose the activity that speaks to your soul",
+                    q1Opt1: "Desert camping under the stars",
+                    q1Opt2: "Beach relaxation by the ocean",
+                    q1Opt3: "Fine dining in the city",
+                    q1Opt4: "Cozy evening at home",
+                    q2: "Which scent family speaks to you?",
+                    q2Sub: "Trust your instinct",
+                    q2Opt1: "Warm Woods & Oud",
+                    q2Opt2: "Fresh Flowers",
+                    q2Opt3: "Clean & Aquatic",
+                    q2Opt4: "Spicy & Oriental",
+                    q3: "When do you wear perfume most?",
+                    q3Sub: "Choose your primary occasion",
+                    q3Opt1: "Daily / Work",
+                    q3Opt2: "Evening Events",
+                    q3Opt3: "Special Occasions",
+                    q3Opt4: "All the time",
+                    q4: "What's your personality type?",
+                    q4Sub: "This helps us match your vibe",
+                    q4Opt1: "Bold & Confident",
+                    q4Opt2: "Elegant & Refined",
+                    q4Opt3: "Playful & Fun",
+                    q4Opt4: "Mysterious & Intriguing",
+                    q5: "Which season do you love most?",
+                    q5Sub: "Scents change with the seasons",
+                    q5Opt1: "Spring",
+                    q5Opt2: "Summer",
+                    q5Opt3: "Autumn",
+                    q5Opt4: "Winter"
+                },
+                products: {
+                    title: "Our Collection",
+                    subtitle: "Handcrafted Elegance in Every Bottle",
+                    addToCart: "Add",
+                    pyramidTitle: "Fragrance Pyramid",
+                    topNotes: "Top",
+                    heartNotes: "Heart",
+                    baseNotes: "Base"
+                },
+                filter: {
+                    all: "All",
+                    oud: "Oud",
+                    floral: "Floral",
+                    fresh: "Fresh",
+                    oriental: "Oriental"
+                },
+                sample: {
+                    title: "Create Your Discovery Set",
+                    subtitle: "Choose any 3 samples for only OMR 15.000",
+                    cta: "Add Discovery Set",
+                    added: "Added to discovery set!",
+                    full: "Sample set is full! Remove one first."
+                },
+                pairing: {
+                    title: "Scent Pairing Guide",
+                    subtitle: "Find the perfect fragrance for every occasion",
+                    summer: "Summer Days",
+                    summerDesc: "Light, fresh, aquatic notes perfect for hot weather",
+                    evening: "Evening Events",
+                    eveningDesc: "Rich oud and amber for special occasions",
+                    romantic: "Romantic Dates",
+                    romanticDesc: "Romantic florals that leave lasting impressions",
+                    professional: "Professional",
+                    professionalDesc: "Subtle, sophisticated scents for the workplace"
+                },
+                memory: {
+                    title: "Scent Stories",
+                    subtitle: "Memories our customers have shared"
+                },
+                unboxing: {
+                    title: "The Zarafet Experience",
+                    subtitle: "Click to unveil what awaits inside every package",
+                    click: "Click to unbox",
+                    perfume: "Your Perfume",
+                    guide: "Scent Guide",
+                    samples: "Samples",
+                    note: "Handwritten Note"
+                },
+                about: {
+                    title1: "Crafting",
+                    title2: "Memories",
+                    title3: "Through Scent",
+                    p1: "Welcome to Zarafet Perfumes, where fragrance becomes an art form. Each perfume in our collection is carefully selected to evoke emotions, create lasting impressions, and become an extension of your personality.",
+                    p2: "We believe that the right fragrance is more than just a scent—it's a statement, a memory, a signature that precedes you and lingers after you've gone. Our perfumes are crafted using the finest ingredients from around the world.",
+                    stat1: "Unique Scents",
+                    stat2: "Happy Customers",
+                    stat3: "Average Rating"
+                },
+                contact: {
+                    title: "Get In Touch",
+                    subtitle: "We're here to help you find your perfect scent",
+                    phone: "Phone",
+                    email: "Email",
+                    location: "Location"
+                },
+                newsletter: {
+                    title: "Join the Zarafet Family",
+                    subtitle: "Subscribe for exclusive offers, new arrivals, and fragrance stories from our atelier.",
+                    placeholder: "Enter your email",
+                    cta: "Subscribe",
+                    success: "Welcome to the family! Check your email."
+                },
+                cart: {
+                    title: "Your Cart",
+                    total: "Total:",
+                    checkout: "Order via WhatsApp",
+                    empty: "Your cart is empty",
+                    explore: "Explore Collection"
+                },
+                wishlist: {
+                    title: "Your Wishlist",
+                    empty: "Your wishlist is empty",
+                    added: "Added to wishlist!",
+                    removed: "Removed from wishlist"
+                },
+                footer: {
+                    shop: "Shop",
+                    allFragrances: "All Fragrances",
+                    oudCollection: "Oud Collection",
+                    floralScents: "Floral Scents",
+                    freshClean: "Fresh & Clean",
+                    giftSets: "Gift Sets",
+                    discover: "Discover",
+                    ourStory: "Our Story",
+                    sustainability: "Sustainability",
+                    careers: "Careers",
+                    press: "Press",
+                    support: "Support",
+                    contact: "Contact Us",
+                    faqs: "FAQs",
+                    shipping: "Shipping Info",
+                    returns: "Returns",
+                    track: "Track Order",
+                    rights: "All Rights Reserved",
+                    crafted: "Crafted with",
+                    muscat: "in Muscat"
+                },
+                toast: {
+                    added: "added to cart!",
+                    removed: "removed from cart",
+                    sampleAdded: "added to discovery set!"
+                }
+            },
+            ar: {
+                nav: {
+                    home: "الرئيسية",
+                    quiz: "اختبار العطر",
+                    collection: "المجموعة",
+                    pairing: "التنسيق",
+                    stories: "القصص",
+                    about: "من نحن",
+                    contact: "تواصل معنا"
+                },
+                hero: {
+                    badge: "تأسست ٢٠٢٤ • مسقط، عمان",
+                    title: "اكتشف عطرك المميز",
+                    subtitle: "عطور فاخرة مصنوعة يدوياً تجسد تراث الجزيرة العربية مع لمسة عصرية متطورة",
+                    cta1: "اعثر على عطرك",
+                    cta2: "استكشف المجموعة"
+                },
+                quiz: {
+                    title: "مكتشف العطور",
+                    subtitle: "أجب على ٥ أسئلة بسيطة وسنوصيك بالعطر المثالي",
+                    resultTitle: "العطر المناسب لك",
+                    resultSubtitle: "بناءً على إجاباتك، نوصي بـ:",
+                    restart: "ابدأ من جديد",
+                    q1: "ما هو عطلة نهاية الأسبوع المثالية بالنسبة لك؟",
+                    q1Sub: "اختر النشاط الذي يتحدث إلى روحك",
+                    q1Opt1: "تخييم في الصحراء تحت النجوم",
+                    q1Opt2: "الاسترخاء على الشاطئ بجانب المحيط",
+                    q1Opt3: "عشاء فاخر في المدينة",
+                    q1Opt4: "مساء مريح في المنزل",
+                    q2: "أي عائلة عطرية تتحدث إليك؟",
+                    q2Sub: "ثق بغرائزك",
+                    q2Opt1: "الأخشاب والعود الدافئة",
+                    q2Opt2: "الزهور الطازجة",
+                    q2Opt3: "النظافة والمياه",
+                    q2Opt4: "التوابل والشرقية",
+                    q3: "متى ترتدي العطر غالباً؟",
+                    q3Sub: "اختر المناسبة الأساسية",
+                    q3Opt1: "يومياً / العمل",
+                    q3Opt2: "مناسبات المساء",
+                    q3Opt3: "المناسبات الخاصة",
+                    q3Opt4: "طوال الوقت",
+                    q4: "ما هو نوع شخصيتك؟",
+                    q4Sub: "هذا يساعدنا على مطابقة أسلوبك",
+                    q4Opt1: "جريئ وواثق",
+                    q4Opt2: "أنيق وراقٍ",
+                    q4Opt3: "مرح وممتع",
+                    q4Opt4: "غامض ومثير",
+                    q5: "أي فصل تحبه أكثر؟",
+                    q5Sub: "العطور تتغير مع المواسم",
+                    q5Opt1: "الربيع",
+                    q5Opt2: "الصيف",
+                    q5Opt3: "الخريف",
+                    q5Opt4: "الشتاء"
+                },
+                products: {
+                    title: "مجموعتنا",
+                    subtitle: "أناقة مصنوعة يدوياً في كل زجاجة",
+                    addToCart: "أضف",
+                    pyramidTitle: "هرم العطر",
+                    topNotes: "الافتتاحية",
+                    heartNotes: "القلب",
+                    baseNotes: "القاعدة"
+                },
+                filter: {
+                    all: "الكل",
+                    oud: "العود",
+                    floral: "الزهور",
+                    fresh: "المنعشة",
+                    oriental: "الشرقية"
+                },
+                sample: {
+                    title: "اصنع مجموعة الاكتشاف الخاصة بك",
+                    subtitle: "اختر أي ٣ عينات فقط بـ ١٥ ريال عماني",
+                    cta: "أضف مجموعة الاكتشاف",
+                    added: "تمت الإضافة إلى مجموعة الاكتشاف!",
+                    full: "مجموعة العينات ممتلئة! أزل واحدة أولاً."
+                },
+                pairing: {
+                    title: "دليل تنسيق العطور",
+                    subtitle: "اعثر على العطر المثالي لكل مناسبة",
+                    summer: "أيام الصيف",
+                    summerDesc: "نوتات خفيفة ومنعشة ومائية مثالية للطقس الحار",
+                    evening: "مناسبات المساء",
+                    eveningDesc: "عود وعنبر غني للمناسبات الخاصة",
+                    romantic: "المواعيد الرومانسية",
+                    romanticDesc: "عطور زهرية رومانسية تترك انطباعاً دائماً",
+                    professional: "العمل",
+                    professionalDesc: "عطور دقيقة وراقية لبيئة العمل"
+                },
+                memory: {
+                    title: "قصص العطر",
+                    subtitle: "ذكريات شاركها عملاؤنا"
+                },
+                unboxing: {
+                    title: "تجربة زرافيت",
+                    subtitle: "انقر للكشف عما ينتظرك داخل كل صندوق",
+                    click: "انقر للفتح",
+                    perfume: "عطرك",
+                    guide: "دليل العطر",
+                    samples: "عينات",
+                    note: "مذكرة بخط اليد"
+                },
+                about: {
+                    title1: "صناعة",
+                    title2: "الذكريات",
+                    title3: "عبر العطر",
+                    p1: "مرحباً بك في عطور زرافيت، حيث يصبح العطر شكلاً من أشكال الفن. تم اختيار كل عطر في مجموعتنا بعناية لإثارة المشاعر وخلق انطباعات دائمة وتصبح امتداداً لشخصيتك.",
+                    p2: "نؤمن بأن العطر المناسب هو أكثر من مجرد رائحة—إنه بيان، وذكرى، وتوقيع يتقدمك ويدوم بعد رحيلك. عطورنا مصنوعة بأجود المكونات من جميع أنحاء العالم.",
+                    stat1: "عطر فريد",
+                    stat2: "عميل سعيد",
+                    stat3: "متوسط التقييم"
+                },
+                contact: {
+                    title: "تواصل معنا",
+                    subtitle: "نحن هنا لمساعدتك في العثور على عطرك المثالي",
+                    phone: "الهاتف",
+                    email: "البريد الإلكتروني",
+                    location: "الموقع"
+                },
+                newsletter: {
+                    title: "انضم إلى عائلة زرافيت",
+                    subtitle: "اشترك للحصول على عروض حصرية ووصولات جديدة وقصص العطر من ورشتنا.",
+                    placeholder: "أدخل بريدك الإلكتروني",
+                    cta: "اشترك",
+                    success: "مرحباً بك في العائلة! تحقق من بريدك الإلكتروني."
+                },
+                cart: {
+                    title: "سلة التسوق",
+                    total: "المجموع:",
+                    checkout: "اطلب عبر الواتساب",
+                    empty: "سلة التسوق فارغة",
+                    explore: "استكشف المجموعة"
+                },
+                wishlist: {
+                    title: "المفضلة",
+                    empty: "المفضلة فارغة",
+                    added: "تمت الإضافة إلى المفضلة!",
+                    removed: "تمت الإزالة من المفضلة"
+                },
+                footer: {
+                    shop: "التسوق",
+                    allFragrances: "جميع العطور",
+                    oudCollection: "مجموعة العود",
+                    floralScents: "العطور الزهرية",
+                    freshClean: "المنعش والنظيف",
+                    giftSets: "مجموعات الهدايا",
+                    discover: "اكتشف",
+                    ourStory: "قصتنا",
+                    sustainability: "الاستدامة",
+                    careers: "الوظائف",
+                    press: "الصحافة",
+                    support: "الدعم",
+                    contact: "تواصل معنا",
+                    faqs: "الأسئلة الشائعة",
+                    shipping: "معلومات الشحن",
+                    returns: "الإرجاع",
+                    track: "تتبع الطلب",
+                    rights: "جميع الحقوق محفوظة",
+                    crafted: "صُنع بـ",
+                    muscat: "في مسقط"
+                },
+                toast: {
+                    added: "تمت الإضافة إلى السلة!",
+                    removed: "تمت الإزالة من السلة",
+                    sampleAdded: "تمت الإضافة إلى مجموعة الاكتشاف!"
+                }
+            }
+        };
+
+        let currentLang = localStorage.getItem('zarafetLang') || 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('zarafetLang', lang);
+            
+            // Update HTML direction
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            
+            // Update language button
+            document.getElementById('langText').textContent = lang === 'ar' ? 'AR' : 'EN';
+            
+            // Update all elements with data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const translation = getTranslation(key);
+                if (translation) {
+                    el.textContent = translation;
+                }
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                const translation = getTranslation(key);
+                if (translation) {
+                    el.placeholder = translation;
+                }
+            });
+            
+            // Update page title
+            const titleKey = document.getElementById('pageTitle').getAttribute('data-i18n');
+            if (titleKey) {
+                const title = getTranslation(titleKey);
+                if (title) document.title = title;
+            }
+            
+            // Re-render dynamic content
+            renderProducts();
+            renderMemories();
+            updateCartUI();
+            updateWishlistUI();
+            
+            // Update quiz if visible
+            if (currentQuizStep <= 5 && document.getElementById('quizContent').style.display !== 'none') {
+                showQuestion(currentQuizStep);
+            }
+        }
+
+        function getTranslation(key) {
+            const keys = key.split('.');
+            let value = translations[currentLang];
+            for (const k of keys) {
+                if (value && value[k] !== undefined) {
+                    value = value[k];
+                } else {
+                    return null;
+                }
+            }
+            return value;
+        }
+
+        function toggleLanguage() {
+            const newLang = currentLang === 'en' ? 'ar' : 'en';
+            setLanguage(newLang);
+        }
+
+        // ============================================
         // STATE MANAGEMENT
         // ============================================
         let cart = JSON.parse(localStorage.getItem('zarafetCart')) || [];
@@ -2336,13 +2927,13 @@
         // INITIALIZATION
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
+            // Set initial language
+            setLanguage(currentLang);
+            
             // Hide loader
             setTimeout(() => {
                 document.getElementById('loader').classList.add('hidden');
             }, 1500);
-
-            // Initialize custom cursor
-            initCursor();
 
             // Create particles
             createParticles();
@@ -2357,6 +2948,9 @@
             updateCartUI();
             updateWishlistUI();
 
+            // Initialize quiz
+            resetQuiz();
+
             // Scroll animations
             initScrollAnimations();
 
@@ -2370,37 +2964,6 @@
                 }
             });
         });
-
-        // ============================================
-        // CUSTOM CURSOR
-        // ============================================
-        function initCursor() {
-            if (window.matchMedia('(pointer: coarse)').matches) return;
-
-            const cursor = document.getElementById('cursor');
-            let mouseX = 0, mouseY = 0;
-            let cursorX = 0, cursorY = 0;
-
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
-
-            function animateCursor() {
-                cursorX += (mouseX - cursorX) * 0.1;
-                cursorY += (mouseY - cursorY) * 0.1;
-                cursor.style.left = cursorX - 10 + 'px';
-                cursor.style.top = cursorY - 10 + 'px';
-                requestAnimationFrame(animateCursor);
-            }
-            animateCursor();
-
-            // Hover effects
-            document.querySelectorAll('a, button, .product-card, .quiz-option').forEach(el => {
-                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-            });
-        }
 
         // ============================================
         // PARTICLES
@@ -2626,7 +3189,7 @@
                             <button class="action-btn ${isInWishlist(p.id) ? 'wishlisted' : ''}" onclick="toggleWishlistItem(${p.id})" title="${isInWishlist(p.id) ? 'Remove from' : 'Add to'} Wishlist">
                                 <i class="fas fa-heart"></i>
                             </button>
-                            <button class="action-btn" onclick="addToSampleSet(${p.id})" title="Add to Discovery Set">
+                            <button class="action-btn" onclick="addToSampleSet(${p.id}, event)" title="Add to Discovery Set">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
@@ -2706,7 +3269,12 @@
         // ============================================
         // SAMPLE SET BUILDER
         // ============================================
-        function addToSampleSet(productId) {
+        function addToSampleSet(productId, event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
             const product = products.find(p => p.id === productId);
             const emptySlot = sampleSet.findIndex(s => s === null);
             
