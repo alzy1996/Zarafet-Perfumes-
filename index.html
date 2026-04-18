@@ -44,8 +44,70 @@
             background: var(--white);
             color: var(--text);
             line-height: 1.6;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Horizontal Scroll Container */
+        .horizontal-wrapper {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .horizontal-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Each section takes full viewport width */
+        .horizontal-wrapper > section {
+            min-width: 100vw;
+            width: 100vw;
+            height: 100vh;
+            flex-shrink: 0;
+            position: relative;
+            box-sizing: border-box;
+            overflow-y: auto;
             overflow-x: hidden;
-            transition: var(--transition);
+        }
+
+        /* Header stays fixed on top */
+        header {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(26,26,26,0.95);
+        }
+
+        /* Footer inside horizontal scroll */
+        footer {
+            min-width: 100vw;
+            width: 100vw;
+            height: 100vh;
+            flex-shrink: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--white);
+            border-top: 1px solid var(--border);
         }
 
         h1, h2, h3, .brand-font {
@@ -137,6 +199,54 @@
             transform: translateX(0);
         }
 
+        html[dir="rtl"] header .container {
+            flex-direction: row-reverse;
+        }
+
+        html[dir="rtl"] .nav-actions {
+            flex-direction: row-reverse;
+        }
+
+        html[dir="rtl"] .cart-sidebar {
+            right: auto;
+            left: 0;
+            transform: translateX(-100%);
+        }
+
+        html[dir="rtl"] .cart-sidebar.open {
+            transform: translateX(0);
+        }
+
+        html[dir="rtl"] .wishlist-sidebar {
+            right: auto;
+            left: 0;
+            transform: translateX(-100%);
+        }
+
+        html[dir="rtl"] .wishlist-sidebar.open {
+            transform: translateX(0);
+        }
+
+        html[dir="rtl"] .sample-slots {
+            flex-direction: row-reverse;
+        }
+
+        html[dir="rtl"] .filter-tabs {
+            direction: rtl;
+        }
+
+        html[dir="rtl"] .memory-header {
+            flex-direction: row-reverse;
+        }
+
+        html[dir="rtl"] .memory-meta {
+            text-align: right;
+        }
+
+        html[dir="rtl"] .newsletter-form {
+            direction: rtl;
+        }
+
         /* Language Toggle */
         .lang-toggle {
             background: none;
@@ -181,14 +291,19 @@
 
         /* Header */
         header {
-            background: var(--white);
+            background: rgba(255,255,255,0.98);
             padding: 1.2rem 5%;
             position: fixed;
             width: 100%;
             top: 0;
-            z-index: 1000;
+            z-index: 10000;
             border-bottom: 1px solid var(--border);
             transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(26,26,26,0.98);
         }
 
         header.scrolled {
@@ -315,15 +430,14 @@
 
         /* Hero Section with Parallax */
         .hero {
-            margin-top: 80px;
-            min-height: 100vh;
+            padding-top: 80px;
+            height: 100vh;
             background: linear-gradient(135deg, rgba(250,248,245,0.98) 0%, rgba(250,248,245,0.95) 100%),
                         url('https://images.unsplash.com/photo-1594035910387-fea47794261f?w=1920') center/cover fixed;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 2rem;
             position: relative;
             overflow: hidden;
         }
@@ -500,6 +614,11 @@
         .quiz-section {
             background: var(--cream);
             padding: 6rem 5%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
         }
 
         .quiz-container {
@@ -621,6 +740,8 @@
         .products-section {
             padding: 6rem 5%;
             background: var(--white);
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .section-header {
@@ -1018,6 +1139,11 @@
         .pairing-section {
             background: var(--white);
             padding: 6rem 5%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
         }
 
         .pairing-grid {
@@ -1061,6 +1187,11 @@
         .memory-section {
             background: var(--cream);
             padding: 6rem 5%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
         }
 
         .memory-grid {
@@ -1129,6 +1260,11 @@
             background: var(--white);
             padding: 6rem 5%;
             text-align: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
         }
 
         .unboxing-stage {
@@ -1219,6 +1355,11 @@
         .about-section {
             background: var(--cream);
             padding: 6rem 5%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
         }
 
         .about-content {
@@ -1291,6 +1432,11 @@
         .contact-section {
             background: var(--white);
             padding: 6rem 5%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
         }
 
         .contact-grid {
@@ -1489,7 +1635,7 @@
             height: 100vh;
             background: var(--white);
             border-left: 1px solid var(--border);
-            z-index: 2000;
+            z-index: 20000;
             transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
@@ -1643,7 +1789,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 1500;
+            z-index: 15000;
             display: none;
             backdrop-filter: blur(5px);
         }
@@ -1661,7 +1807,7 @@
             height: 100vh;
             background: var(--white);
             border-left: 1px solid var(--border);
-            z-index: 2000;
+            z-index: 20000;
             transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
@@ -1911,22 +2057,22 @@
     <!-- Scent Particles -->
     <div class="scent-particles" id="particles"></div>
 
-    <!-- Header -->
+    <!-- Header (Fixed) -->
     <header id="header">
         <nav>
-            <div class="logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <div class="logo" onclick="scrollToSection(0)">
                 <img src="logo.png" alt="Zarafet Perfumes">
                 <div class="logo-text">ZARAFET</div>
             </div>
             
             <ul class="nav-links">
-                <li><a href="#home" data-i18n="nav.home">Home</a></li>
-                <li><a href="#quiz" data-i18n="nav.quiz">Quiz</a></li>
-                <li><a href="#collection" data-i18n="nav.collection">Collection</a></li>
-                <li><a href="#pairing" data-i18n="nav.pairing">Pairing</a></li>
-                <li><a href="#memory" data-i18n="nav.stories">Stories</a></li>
-                <li><a href="#about" data-i18n="nav.about">About</a></li>
-                <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+                <li><a href="#" onclick="scrollToSection(0); return false;" data-i18n="nav.home">Home</a></li>
+                <li><a href="#" onclick="scrollToSection(1); return false;" data-i18n="nav.quiz">Quiz</a></li>
+                <li><a href="#" onclick="scrollToSection(2); return false;" data-i18n="nav.collection">Collection</a></li>
+                <li><a href="#" onclick="scrollToSection(3); return false;" data-i18n="nav.pairing">Pairing</a></li>
+                <li><a href="#" onclick="scrollToSection(4); return false;" data-i18n="nav.stories">Stories</a></li>
+                <li><a href="#" onclick="scrollToSection(6); return false;" data-i18n="nav.about">About</a></li>
+                <li><a href="#" onclick="scrollToSection(7); return false;" data-i18n="nav.contact">Contact</a></li>
             </ul>
             
             <div class="nav-actions">
@@ -1949,6 +2095,9 @@
         </nav>
     </header>
 
+    <!-- Horizontal Scroll Wrapper -->
+    <div class="horizontal-wrapper" id="horizontalWrapper">
+
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content">
@@ -1956,10 +2105,10 @@
             <h1 data-i18n="hero.title">Discover Your Signature Scent</h1>
             <p data-i18n="hero.subtitle">Handcrafted luxury fragrances that capture the essence of Arabian heritage blended with modern sophistication</p>
             <div class="hero-buttons">
-                <a href="#quiz" class="btn">
+                <a href="#" onclick="scrollToSection(1); return false;" class="btn">
                     <i class="fas fa-magic"></i> <span data-i18n="hero.cta1">Find Your Scent</span>
                 </a>
-                <a href="#collection" class="btn btn-outline" data-i18n="hero.cta2">
+                <a href="#" onclick="scrollToSection(2); return false;" class="btn btn-outline" data-i18n="hero.cta2">
                     Explore Collection
                 </a>
             </div>
@@ -2010,8 +2159,8 @@
         
         <div class="filter-tabs">
             <button class="filter-tab active" onclick="filterProducts('all')" data-i18n="filter.all">All</button>
-            <button class="filter-tab" onclick="filterProducts('Nur Alayin')" data-i18n="filter.oud">Nur Alayin</button>
-            <button class="filter-tab" onclick="filterProducts('Adicession')" data-i18n="filter.floral">Adicession</button>
+            <button class="filter-tab" onclick="filterProducts('oud')" data-i18n="filter.oud">Oud</button>
+            <button class="filter-tab" onclick="filterProducts('floral')" data-i18n="filter.floral">Floral</button>
             <button class="filter-tab" onclick="filterProducts('fresh')" data-i18n="filter.fresh">Fresh</button>
             <button class="filter-tab" onclick="filterProducts('oriental')" data-i18n="filter.oriental">Oriental</button>
         </div>
@@ -2021,7 +2170,7 @@
         <!-- Sample Set Builder -->
         <div class="sample-builder">
             <h3 data-i18n="sample.title">Create Your Discovery Set</h3>
-            <p data-i18n="sample.subtitle">Choose any 3 samples for only OMR 30.000</p>
+            <p data-i18n="sample.subtitle">Choose any 3 samples for only OMR 15.000</p>
             <div class="sample-slots" id="sampleSlots">
                 <div class="sample-slot" data-slot="0">
                     <i class="fas fa-plus"></i>
@@ -2182,7 +2331,7 @@
             <div class="contact-card">
                 <i class="fas fa-envelope"></i>
                 <h4 data-i18n="contact.email">Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4e3d21203c602823290e29232f2722602d2123">[email&#160;protected]</a></p>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="64170b0a164a020903240309050d084a070b09">[email&#160;protected]</a></p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-map-marker-alt"></i>
@@ -2219,29 +2368,29 @@
             </div>
             
             <div class="footer-column">
-                <h5>Shop</h5>
+                <h5 data-i18n="footer.shop">Shop</h5>
                 <ul>
-                    <li><a href="#collection">All Fragrances</a></li>
-                    <li><a href="#" onclick="filterProducts('oud'); return false;">Oud Collection</a></li>
-                    <li><a href="#" onclick="filterProducts('floral'); return false;">Floral Scents</a></li>
-                    <li><a href="#" onclick="filterProducts('fresh'); return false;">Fresh & Clean</a></li>
-                    <li><a href="#">Gift Sets</a></li>
+                    <li><a href="#collection" data-i18n="footer.allFragrances">All Fragrances</a></li>
+                    <li><a href="#" onclick="filterProducts('oud'); return false;" data-i18n="footer.oudCollection">Oud Collection</a></li>
+                    <li><a href="#" onclick="filterProducts('floral'); return false;" data-i18n="footer.floralScents">Floral Scents</a></li>
+                    <li><a href="#" onclick="filterProducts('fresh'); return false;" data-i18n="footer.freshClean">Fresh & Clean</a></li>
+                    <li><a href="#" data-i18n="footer.giftSets">Gift Sets</a></li>
                 </ul>
             </div>
             
             <div class="footer-column">
-                <h5>Discover</h5>
+                <h5 data-i18n="footer.discover">Discover</h5>
                 <ul>
-                    <li><a href="#quiz">Scent Quiz</a></li>
-                    <li><a href="#pairing">Pairing Guide</a></li>
-                    <li><a href="#memory">Customer Stories</a></li>
-                    <li><a href="#about">Our Story</a></li>
-                    <li><a href="#">Blog</a></li>
+                    <li><a href="#quiz" data-i18n="footer.scentQuiz">Scent Quiz</a></li>
+                    <li><a href="#pairing" data-i18n="footer.pairingGuide">Pairing Guide</a></li>
+                    <li><a href="#memory" data-i18n="footer.customerStories">Customer Stories</a></li>
+                    <li><a href="#about" data-i18n="footer.ourStory">Our Story</a></li>
+                    <li><a href="#" data-i18n="footer.blog">Blog</a></li>
                 </ul>
             </div>
             
             <div class="footer-column">
-                <h5>Support</h5>
+                <h5 data-i18n="footer.support">Support</h5>
                 <ul>
                     <li><a href="#contact" data-i18n="footer.contact">Contact Us</a></li>
                     <li><a href="#" data-i18n="footer.faqs">FAQs</a></li>
@@ -2256,6 +2405,8 @@
             <p>&copy; 2024 Zarafet Perfumes. <span data-i18n="footer.rights">All Rights Reserved</span>. <span data-i18n="footer.crafted">Crafted with</span> <i class="fas fa-heart" style="color: var(--bronze);"></i> <span data-i18n="footer.muscat">in Muscat</span></p>
         </div>
     </footer>
+
+    </div><!-- End Horizontal Wrapper -->
 
     <!-- Cart Sidebar -->
     <div class="overlay" id="overlay" onclick="closeSidebars()"></div>
@@ -2303,6 +2454,87 @@
     </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><script>
+        // ============================================
+        // HORIZONTAL SCROLLING
+        // ============================================
+        const wrapper = document.getElementById('horizontalWrapper');
+        let isScrolling = false;
+        let currentSection = 0;
+        const totalSections = 9; // home, quiz, collection, pairing, memory, unboxing, about, contact, footer
+
+        // Convert vertical wheel scroll to horizontal scroll
+        window.addEventListener('wheel', (e) => {
+            if (isScrolling) return;
+            e.preventDefault();
+            
+            const delta = e.deltaY || e.deltaX;
+            
+            if (delta > 0) {
+                // Scroll down = move right
+                currentSection = Math.min(currentSection + 1, totalSections - 1);
+            } else {
+                // Scroll up = move left
+                currentSection = Math.max(currentSection - 1, 0);
+            }
+            
+            scrollToSection(currentSection);
+        }, { passive: false });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        wrapper.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left = move right
+                    currentSection = Math.min(currentSection + 1, totalSections - 1);
+                } else {
+                    // Swipe right = move left
+                    currentSection = Math.max(currentSection - 1, 0);
+                }
+                scrollToSection(currentSection);
+            }
+        }
+
+        function scrollToSection(index) {
+            isScrolling = true;
+            currentSection = index;
+            const targetX = index * window.innerWidth;
+            
+            wrapper.scrollTo({
+                left: targetX,
+                behavior: 'smooth'
+            });
+            
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
+        }
+
+        // Keyboard navigation
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                currentSection = Math.min(currentSection + 1, totalSections - 1);
+                scrollToSection(currentSection);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                currentSection = Math.max(currentSection - 1, 0);
+                scrollToSection(currentSection);
+            }
+        });
+
         // ============================================
         // PRODUCT DATA WITH ENHANCED INFO
         // ============================================
@@ -2954,10 +3186,10 @@
             // Scroll animations
             initScrollAnimations();
 
-            // Header scroll effect
-            window.addEventListener('scroll', () => {
+            // Header scroll effect (based on horizontal scroll)
+            wrapper.addEventListener('scroll', () => {
                 const header = document.getElementById('header');
-                if (window.scrollY > 50) {
+                if (wrapper.scrollLeft > 50) {
                     header.classList.add('scrolled');
                 } else {
                     header.classList.remove('scrolled');
@@ -3010,46 +3242,46 @@
         const quizQuestions = [
             {
                 step: 2,
-                question: "Which scent family speaks to you?",
-                subtitle: "Trust your instinct",
+                question: "quiz.q2",
+                subtitle: "quiz.q2Sub",
                 options: [
-                    { value: "woody", icon: "fa-tree", text: "Warm Woods & Oud" },
-                    { value: "floral", icon: "fa-seedling", text: "Fresh Flowers" },
-                    { value: "fresh", icon: "fa-water", text: "Clean & Aquatic" },
-                    { value: "oriental", icon: "fa-fire", text: "Spicy & Oriental" }
+                    { value: "woody", icon: "fa-tree", text: "quiz.q2Opt1" },
+                    { value: "floral", icon: "fa-seedling", text: "quiz.q2Opt2" },
+                    { value: "fresh", icon: "fa-water", text: "quiz.q2Opt3" },
+                    { value: "oriental", icon: "fa-fire", text: "quiz.q2Opt4" }
                 ]
             },
             {
                 step: 3,
-                question: "When do you wear perfume most?",
-                subtitle: "Choose your primary occasion",
+                question: "quiz.q3",
+                subtitle: "quiz.q3Sub",
                 options: [
-                    { value: "daily", icon: "fa-sun", text: "Daily / Work" },
-                    { value: "evening", icon: "fa-moon", text: "Evening Events" },
-                    { value: "special", icon: "fa-gem", text: "Special Occasions" },
-                    { value: "all", icon: "fa-clock", text: "All the time" }
+                    { value: "daily", icon: "fa-sun", text: "quiz.q3Opt1" },
+                    { value: "evening", icon: "fa-moon", text: "quiz.q3Opt2" },
+                    { value: "special", icon: "fa-gem", text: "quiz.q3Opt3" },
+                    { value: "all", icon: "fa-clock", text: "quiz.q3Opt4" }
                 ]
             },
             {
                 step: 4,
-                question: "What's your personality type?",
-                subtitle: "This helps us match your vibe",
+                question: "quiz.q4",
+                subtitle: "quiz.q4Sub",
                 options: [
-                    { value: "bold", icon: "fa-crown", text: "Bold & Confident" },
-                    { value: "elegant", icon: "fa-feather", text: "Elegant & Refined" },
-                    { value: "playful", icon: "fa-smile", text: "Playful & Fun" },
-                    { value: "mysterious", icon: "fa-mask", text: "Mysterious & Intriguing" }
+                    { value: "bold", icon: "fa-crown", text: "quiz.q4Opt1" },
+                    { value: "elegant", icon: "fa-feather", text: "quiz.q4Opt2" },
+                    { value: "playful", icon: "fa-smile", text: "quiz.q4Opt3" },
+                    { value: "mysterious", icon: "fa-mask", text: "quiz.q4Opt4" }
                 ]
             },
             {
                 step: 5,
-                question: "Which season do you love most?",
-                subtitle: "Scents change with the seasons",
+                question: "quiz.q5",
+                subtitle: "quiz.q5Sub",
                 options: [
-                    { value: "spring", icon: "fa-leaf", text: "Spring" },
-                    { value: "summer", icon: "fa-sun", text: "Summer" },
-                    { value: "autumn", icon: "fa-leaf", text: "Autumn" },
-                    { value: "winter", icon: "fa-snowflake", text: "Winter" }
+                    { value: "spring", icon: "fa-leaf", text: "quiz.q5Opt1" },
+                    { value: "summer", icon: "fa-sun", text: "quiz.q5Opt2" },
+                    { value: "autumn", icon: "fa-leaf", text: "quiz.q5Opt3" },
+                    { value: "winter", icon: "fa-snowflake", text: "quiz.q5Opt4" }
                 ]
             }
         ];
@@ -3074,15 +3306,18 @@
             const question = quizQuestions[step - 1];
             const content = document.getElementById('quizContent');
             
+            const qText = getTranslation(question.question) || question.question;
+            const qSub = getTranslation(question.subtitle) || question.subtitle;
+            
             content.innerHTML = `
                 <div class="quiz-question" data-step="${question.step}" style="animation: fadeInUp 0.5s;">
-                    <h3>${question.question}</h3>
-                    <p>${question.subtitle}</p>
+                    <h3>${qText}</h3>
+                    <p>${qSub}</p>
                     <div class="quiz-options">
                         ${question.options.map(opt => `
                             <div class="quiz-option" onclick="selectOption(${question.step}, '${opt.value}')">
                                 <i class="fas ${opt.icon}"></i>
-                                <span>${opt.text}</span>
+                                <span>${getTranslation(opt.text) || opt.text}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -3145,27 +3380,30 @@
             }
             document.getElementById('step1').classList.add('active');
             
-            // Reset content to first question
+            // Reset content to first question (with translations)
+            const q1Text = getTranslation('quiz.q1') || "What's your ideal weekend?";
+            const q1Sub = getTranslation('quiz.q1Sub') || "Choose the activity that speaks to your soul";
+            
             document.getElementById('quizContent').innerHTML = `
                 <div class="quiz-question" data-step="1">
-                    <h3>What's your ideal weekend?</h3>
-                    <p>Choose the activity that speaks to your soul</p>
+                    <h3>${q1Text}</h3>
+                    <p>${q1Sub}</p>
                     <div class="quiz-options">
                         <div class="quiz-option" onclick="selectOption(1, 'desert')">
                             <i class="fas fa-sun"></i>
-                            <span>Desert camping under the stars</span>
+                            <span>${getTranslation('quiz.q1Opt1') || 'Desert camping under the stars'}</span>
                         </div>
                         <div class="quiz-option" onclick="selectOption(1, 'beach')">
                             <i class="fas fa-water"></i>
-                            <span>Beach relaxation by the ocean</span>
+                            <span>${getTranslation('quiz.q1Opt2') || 'Beach relaxation by the ocean'}</span>
                         </div>
                         <div class="quiz-option" onclick="selectOption(1, 'city')">
                             <i class="fas fa-city"></i>
-                            <span>Fine dining in the city</span>
+                            <span>${getTranslation('quiz.q1Opt3') || 'Fine dining in the city'}</span>
                         </div>
                         <div class="quiz-option" onclick="selectOption(1, 'home')">
                             <i class="fas fa-home"></i>
-                            <span>Cozy evening at home</span>
+                            <span>${getTranslation('quiz.q1Opt4') || 'Cozy evening at home'}</span>
                         </div>
                     </div>
                 </div>
@@ -3179,6 +3417,12 @@
             const grid = document.getElementById('productsGrid');
             const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
             
+            const pyramidTitle = getTranslation('products.pyramidTitle') || 'Fragrance Pyramid';
+            const topNotes = getTranslation('products.topNotes') || 'Top';
+            const heartNotes = getTranslation('products.heartNotes') || 'Heart';
+            const baseNotes = getTranslation('products.baseNotes') || 'Base';
+            const addText = getTranslation('products.addToCart') || 'Add';
+            
             grid.innerHTML = filtered.map(p => `
                 <div class="product-card" data-category="${p.category}">
                     <div class="product-image">
@@ -3186,10 +3430,10 @@
                         ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fas fa-spray-can product-placeholder"></i>`}
                         
                         <div class="product-actions">
-                            <button class="action-btn ${isInWishlist(p.id) ? 'wishlisted' : ''}" onclick="toggleWishlistItem(${p.id})" title="${isInWishlist(p.id) ? 'Remove from' : 'Add to'} Wishlist">
+                            <button class="action-btn ${isInWishlist(p.id) ? 'wishlisted' : ''}" onclick="toggleWishlistItem(${p.id})" title="${isInWishlist(p.id) ? (getTranslation('wishlist.removeTitle') || 'Remove from') : (getTranslation('wishlist.addTitle') || 'Add to')} ${getTranslation('wishlist.title') || 'Wishlist'}">
                                 <i class="fas fa-heart"></i>
                             </button>
-                            <button class="action-btn" onclick="addToSampleSet(${p.id}, event)" title="Add to Discovery Set">
+                            <button class="action-btn" onclick="addToSampleSet(${p.id}, event)" title="${getTranslation('sample.cta') || 'Add to Discovery Set'}">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
@@ -3200,19 +3444,19 @@
                         <p class="product-description">${p.description}</p>
                         
                         <div class="fragrance-pyramid">
-                            <div class="pyramid-title">Fragrance Pyramid</div>
+                            <div class="pyramid-title">${pyramidTitle}</div>
                             <div class="pyramid-levels">
-                                <div class="pyramid-level" title="First impression - lasts 15 minutes">
+                                <div class="pyramid-level" title="${currentLang === 'ar' ? 'الانطباع الأول - يستمر 15 دقيقة' : 'First impression - lasts 15 minutes'}">
                                     <i class="fas fa-wind"></i>
-                                    <span><strong>Top:</strong> ${p.pyramid.top}</span>
+                                    <span><strong>${topNotes}:</strong> ${p.pyramid.top}</span>
                                 </div>
-                                <div class="pyramid-level" title="The heart - lasts 3-5 hours">
+                                <div class="pyramid-level" title="${currentLang === 'ar' ? 'القلب - يستمر 3-5 ساعات' : 'The heart - lasts 3-5 hours'}">
                                     <i class="fas fa-heart"></i>
-                                    <span><strong>Heart:</strong> ${p.pyramid.heart}</span>
+                                    <span><strong>${heartNotes}:</strong> ${p.pyramid.heart}</span>
                                 </div>
-                                <div class="pyramid-level" title="The foundation - lasts all day">
+                                <div class="pyramid-level" title="${currentLang === 'ar' ? 'الأساس - يستمر طوال اليوم' : 'The foundation - lasts all day'}">
                                     <i class="fas fa-mountain"></i>
-                                    <span><strong>Base:</strong> ${p.pyramid.base}</span>
+                                    <span><strong>${baseNotes}:</strong> ${p.pyramid.base}</span>
                                 </div>
                             </div>
                         </div>
@@ -3227,7 +3471,7 @@
                                 <span>/ ${p.size}</span>
                             </div>
                             <button class="add-to-cart" onclick="addToCart(${p.id})">
-                                <i class="fas fa-plus"></i> Add
+                                <i class="fas fa-plus"></i> ${addText}
                             </button>
                         </div>
                     </div>
@@ -3279,13 +3523,13 @@
             const emptySlot = sampleSet.findIndex(s => s === null);
             
             if (emptySlot === -1) {
-                showToast('Sample set is full! Remove one first.');
+                showToast(getTranslation('sample.full') || 'Sample set is full! Remove one first.');
                 return;
             }
             
             sampleSet[emptySlot] = product;
             updateSampleSlots();
-            showToast(`${product.name} added to discovery set!`);
+            showToast(`${product.name} ${getTranslation('toast.sampleAdded') || 'added to discovery set!'}`);
         }
 
         function removeFromSampleSet(index) {
@@ -3314,20 +3558,22 @@
         function addSampleSetToCart() {
             const filled = sampleSet.filter(s => s !== null);
             if (filled.length === 0) {
-                showToast('Please add at least one sample!');
+                showToast(currentLang === 'ar' ? 'الرجاء إضافة عينة واحدة على الأقل!' : 'Please add at least one sample!');
                 return;
             }
             
+            const setName = currentLang === 'ar' ? `مجموعة الاكتشاف (${filled.length} عينات)` : `Discovery Set (${filled.length} samples)`;
+            
             cart.push({
                 id: 'sample-set',
-                name: `Discovery Set (${filled.length} samples)`,
+                name: setName,
                 price: 15.000,
                 quantity: 1,
                 samples: filled.map(s => s.name)
             });
             
             saveCart();
-            showToast('Discovery set added to cart!');
+            showToast(currentLang === 'ar' ? 'تمت إضافة مجموعة الاكتشاف إلى السلة!' : 'Discovery set added to cart!');
             
             // Clear sample set
             sampleSet = [null, null, null];
@@ -3353,7 +3599,7 @@
             }
             
             saveCart();
-            showToast(`${product.name} added to cart!`);
+            showToast(`${product.name} ${getTranslation('toast.added') || 'added to cart!'}`);
         }
 
         function removeFromCart(productId) {
@@ -3367,10 +3613,10 @@
             
             if (index > -1) {
                 wishlist.splice(index, 1);
-                showToast(`${product.name} removed from wishlist`);
+                showToast(`${product.name} ${getTranslation('wishlist.removed') || 'removed from wishlist'}`);
             } else {
                 wishlist.push({ id: product.id, name: product.name, price: product.price });
-                showToast(`${product.name} added to wishlist!`);
+                showToast(`${product.name} ${getTranslation('wishlist.added') || 'added to wishlist!'}`);
             }
             
             localStorage.setItem('zarafetWishlist', JSON.stringify(wishlist));
@@ -3398,13 +3644,16 @@
             count.textContent = totalItems;
             total.textContent = `OMR ${totalPrice.toFixed(3)}`;
             
+            const emptyText = getTranslation('cart.empty') || 'Your cart is empty';
+            const exploreText = getTranslation('cart.explore') || 'Explore Collection';
+            
             if (cart.length === 0) {
                 items.innerHTML = `
                     <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
                         <i class="fas fa-shopping-bag" style="font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.5;"></i>
-                        <p>Your cart is empty</p>
+                        <p>${emptyText}</p>
                         <button class="btn" style="margin-top: 1.5rem;" onclick="toggleCart(); window.location.href='#collection';">
-                            Explore Collection
+                            ${exploreText}
                         </button>
                     </div>
                 `;
@@ -3432,11 +3681,13 @@
             
             count.textContent = wishlist.length;
             
+            const emptyText = getTranslation('wishlist.empty') || 'Your wishlist is empty';
+            
             if (wishlist.length === 0) {
                 items.innerHTML = `
                     <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
                         <i class="fas fa-heart" style="font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.5;"></i>
-                        <p>Your wishlist is empty</p>
+                        <p>${emptyText}</p>
                     </div>
                 `;
             } else {
@@ -3475,7 +3726,7 @@
 
         function checkout() {
             if (cart.length === 0) {
-                showToast('Your cart is empty!');
+                showToast(getTranslation('cart.empty') || 'Your cart is empty!');
                 return;
             }
             
