@@ -1480,6 +1480,11 @@
         .newsletter-section {
             background: var(--bronze);
             padding: 4rem 5%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
         }
 
         .newsletter-content {
@@ -2114,10 +2119,6 @@
             </div>
         </div>
     </section>
-                </a>
-            </div>
-        </div>
-    </section>
 
     <!-- Quiz Section -->
     <section class="quiz-section" id="quiz">
@@ -2282,7 +2283,6 @@
             </div>
         </div>
     </section>
-    </section>
 
     <!-- About Section -->
     <section class="about-section" id="about">
@@ -2331,7 +2331,7 @@
             <div class="contact-card">
                 <i class="fas fa-envelope"></i>
                 <h4 data-i18n="contact.email">Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="64170b0a164a020903240309050d084a070b09">[email&#160;protected]</a></p>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="54273b3a267a323933143339353d387a373b39">[email&#160;protected]</a></p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-map-marker-alt"></i>
@@ -2342,7 +2342,7 @@
     </section>
 
     <!-- Newsletter -->
-    <section class="newsletter-section">
+    <section class="newsletter-section" id="newsletter">
         <div class="newsletter-content">
             <h3 data-i18n="newsletter.title">Join the Zarafet Family</h3>
             <p data-i18n="newsletter.subtitle">Subscribe for exclusive offers, new arrivals, and fragrance stories from our atelier.</p>
@@ -2460,7 +2460,7 @@
         const wrapper = document.getElementById('horizontalWrapper');
         let isScrolling = false;
         let currentSection = 0;
-        const totalSections = 9; // home, quiz, collection, pairing, memory, unboxing, about, contact, footer
+        const totalSections = 10; // home, quiz, collection, pairing, memory, unboxing, about, contact, newsletter, footer
 
         // Convert vertical wheel scroll to horizontal scroll
         window.addEventListener('wheel', (e) => {
