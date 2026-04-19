@@ -309,6 +309,11 @@
             border-bottom: 1px solid var(--border);
             transition: var(--transition);
             backdrop-filter: blur(10px);
+            pointer-events: none; /* Allow clicks to pass through to content */
+        }
+
+        header * {
+            pointer-events: auto; /* Re-enable clicks on interactive elements */
         }
 
         [data-theme="dark"] header {
@@ -2348,7 +2353,7 @@
             <div class="contact-card">
                 <i class="fas fa-envelope"></i>
                 <h4 data-i18n="contact.email">Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cab9a5a4b8e4aca7ad8aada7aba3a6e4a9a5a7">[email&#160;protected]</a></p>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7a09151408541c171d3a1d171b131654191517">[email&#160;protected]</a></p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-map-marker-alt"></i>
@@ -2532,10 +2537,13 @@
         }
 
         function scrollToSection(index) {
+            if (index < 0 || index >= totalSections) return;
+            
             isScrolling = true;
             currentSection = index;
             const targetX = index * window.innerWidth;
             
+            // Use native scroll with smooth behavior
             wrapper.scrollTo({
                 left: targetX,
                 behavior: 'smooth'
@@ -2560,26 +2568,6 @@
                 currentSection = Math.max(currentSection - 1, 0);
                 scrollToSection(currentSection);
             }
-        });
-
-        // IntersectionObserver to update current section based on scroll position
-        const sectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const sectionIndex = Array.from(wrapper.querySelectorAll('section, footer')).indexOf(entry.target);
-                    if (sectionIndex !== -1) {
-                        currentSection = sectionIndex;
-                    }
-                }
-            });
-        }, { 
-            root: wrapper,
-            threshold: 0.5 
-        });
-
-        // Observe all sections
-        wrapper.querySelectorAll('section, footer').forEach(section => {
-            sectionObserver.observe(section);
         });
 
         // ============================================
@@ -3273,7 +3261,7 @@
         function initSparkCanvas() {
             sparkCanvas = document.createElement('canvas');
             sparkCanvas.id = 'sparkCanvas';
-            sparkCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;';
+            sparkCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none!important;z-index:5;';
             document.body.appendChild(sparkCanvas);
             sparkCtx = sparkCanvas.getContext('2d');
             
