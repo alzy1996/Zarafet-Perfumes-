@@ -2007,6 +2007,173 @@
             }
         }
 
+        /* Customer Info Modal */
+        .customer-info-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 30000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            pointer-events: auto;
+        }
+
+        .customer-info-modal.active {
+            display: flex;
+        }
+
+        .customer-info-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            direction: inherit;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        html[dir="rtl"] .customer-info-content {
+            direction: rtl;
+        }
+
+        .customer-info-content h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .customer-info-content .delivery-note {
+            text-align: center;
+            color: var(--bronze);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+            background: var(--cream);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--white);
+            color: var(--text);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--bronze);
+        }
+
+        .form-group .error-msg {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .form-group.has-error input,
+        .form-group.has-error textarea {
+            border-color: #e74c3c;
+        }
+
+        .form-group.has-error .error-msg {
+            display: block;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .form-buttons .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .form-buttons .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .form-buttons .btn-outline:hover {
+            background: var(--border);
+        }
+
+        [data-theme="dark"] .customer-info-content {
+            background: var(--dark-surface);
+            color: var(--white);
+        }
+
+        [data-theme="dark"] .form-group input,
+        [data-theme="dark"] .form-group textarea {
+            background: var(--dark-bg);
+            color: var(--white);
+            border-color: var(--dark-border);
+        }
+
+        @keyframes sparkle-trail {
+            0% {
+                opacity: 1;
+                left: -20px;
+                box-shadow: 
+                    0 0 10px var(--bronze),
+                    0 0 20px var(--bronze),
+                    -5px -10px 0 -1px var(--bronze-light),
+                    5px 10px 0 -1px var(--bronze-light);
+            }
+            50% {
+                left: 50%;
+                box-shadow: 
+                    0 0 15px var(--bronze),
+                    0 0 30px var(--bronze),
+                    -8px -15px 0 -1px var(--bronze-light),
+                    8px 15px 0 -1px var(--bronze-light),
+                    -15px 5px 0 -2px var(--cream),
+                    15px -5px 0 -2px var(--cream);
+            }
+            100% {
+                opacity: 0;
+                left: 100%;
+                box-shadow: 
+                    0 0 20px var(--bronze),
+                    0 0 40px var(--bronze),
+                    -10px -20px 0 0 var(--bronze-light),
+                    10px 20px 0 0 var(--bronze-light);
+            }
+        }
+
         /* Additional spark particles for cards */
         .product-card.reveal.active::after,
         .memory-card.reveal.active::after,
@@ -2332,7 +2499,7 @@
             <div class="contact-card">
                 <i class="fas fa-envelope"></i>
                 <h4 data-i18n="contact.email">Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d2e32332f733b303a1d3a303c3431733e3230">[email&#160;protected]</a></p>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="562539382478303b3116313b373f3a7835393b">[email&#160;protected]</a></p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-map-marker-alt"></i>
@@ -2429,6 +2596,49 @@
             <button class="checkout-btn" onclick="checkout()">
                 <i class="fab fa-whatsapp"></i> <span data-i18n="cart.checkout">Order via WhatsApp</span>
             </button>
+        </div>
+    </div>
+
+    <!-- Customer Info Modal -->
+    <div class="customer-info-modal" id="customerInfoModal">
+        <div class="customer-info-content">
+            <h3 data-i18n="customerInfo.title">Complete Your Order</h3>
+            <div class="delivery-note">
+                <i class="fas fa-truck"></i>
+                <span data-i18n="customerInfo.delivery">Delivery within 1 day in Muscat</span>
+            </div>
+            
+            <form id="customerForm" onsubmit="event.preventDefault(); submitCustomerInfo();">
+                <div class="form-group">
+                    <label data-i18n="customerInfo.name">Full Name *</label>
+                    <input type="text" name="name" data-i18n-placeholder="customerInfo.namePlaceholder" placeholder="Your full name" required>
+                    <span class="error-msg" data-i18n="customerInfo.nameError">Please enter your name</span>
+                </div>
+                
+                <div class="form-group">
+                    <label data-i18n="customerInfo.phone">Phone Number *</label>
+                    <input type="tel" name="phone" data-i18n-placeholder="customerInfo.phonePlaceholder" placeholder="+968 9XXX XXXX or 9XXX XXXX" required>
+                    <span class="error-msg" data-i18n="customerInfo.phoneError">Please enter a valid Oman phone number</span>
+                </div>
+                
+                <div class="form-group">
+                    <label data-i18n="customerInfo.address">Delivery Address *</label>
+                    <textarea name="address" rows="3" data-i18n-placeholder="customerInfo.addressPlaceholder" placeholder="Your address in Muscat" required></textarea>
+                    <span class="error-msg" data-i18n="customerInfo.addressError">Please enter your address</span>
+                </div>
+                
+                <div class="form-group">
+                    <label data-i18n="customerInfo.notes">Delivery Notes (Optional)</label>
+                    <input type="text" name="notes" data-i18n-placeholder="customerInfo.notesPlaceholder" placeholder="Building name, floor, landmarks...">
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-outline" onclick="closeCustomerInfoForm()" data-i18n="customerInfo.cancel">Cancel</button>
+                    <button type="submit" class="btn" data-i18n="customerInfo.confirm">
+                        <i class="fab fa-whatsapp"></i> Confirm Order
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -2926,6 +3136,23 @@
                     added: "added to cart!",
                     removed: "removed from cart",
                     sampleAdded: "added to discovery set!"
+                },
+                customerInfo: {
+                    title: "Complete Your Order",
+                    delivery: "Delivery within 1 day in Muscat",
+                    name: "Full Name *",
+                    namePlaceholder: "Enter your full name",
+                    phone: "Phone Number *",
+                    phonePlaceholder: "e.g., 91234567 or +968 91234567",
+                    address: "Delivery Address *",
+                    addressPlaceholder: "Area, street, building number",
+                    notes: "Delivery Notes (Optional)",
+                    notesPlaceholder: "Building name, floor, landmarks...",
+                    cancel: "Cancel",
+                    confirm: "Confirm Order",
+                    nameError: "Please enter your name",
+                    phoneError: "Please enter a valid Oman phone number",
+                    addressError: "Please enter your address"
                 }
             },
             ar: {
@@ -3093,6 +3320,23 @@
                     added: "تمت الإضافة إلى السلة!",
                     removed: "تمت الإزالة من السلة",
                     sampleAdded: "تمت الإضافة إلى مجموعة الاكتشاف!"
+                },
+                customerInfo: {
+                    title: "أكمل طلبك",
+                    delivery: "التوصيل خلال يوم واحد في مسقط",
+                    name: "الاسم الكامل *",
+                    namePlaceholder: "أدخل اسمك الكامل",
+                    phone: "رقم الهاتف *",
+                    phonePlaceholder: "مثال: 91234567 أو +968 91234567",
+                    address: "عنوان التوصيل *",
+                    addressPlaceholder: "المنطقة، الشارع، رقم المبنى",
+                    notes: "ملاحظات التوصيل (اختياري)",
+                    notesPlaceholder: "اسم المبنى، الطابق، معالم...",
+                    cancel: "إلغاء",
+                    confirm: "تأكيد الطلب",
+                    nameError: "الرجاء إدخال الاسم",
+                    phoneError: "الرجاء إدخال رقم هاتف عماني صحيح",
+                    addressError: "الرجاء إدخال العنوان"
                 }
             }
         };
@@ -3842,7 +4086,90 @@
                 return;
             }
             
-            let message = "*Hello Zarafet Perfumes!* %0A%0AI would like to order:%0A%0A";
+            // Show customer info form
+            showCustomerInfoForm();
+        }
+
+        // ============================================
+        // CUSTOMER INFO FORM
+        // ============================================
+        function showCustomerInfoForm() {
+            document.getElementById('customerInfoModal').classList.add('active');
+        }
+
+        function closeCustomerInfoForm() {
+            document.getElementById('customerInfoModal').classList.remove('active');
+            // Clear form
+            document.getElementById('customerForm').reset();
+            // Clear errors
+            document.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+        }
+
+        function validateOmanPhone(phone) {
+            // Remove spaces, dashes, and parentheses
+            const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+            // Oman phone regex: +968 or 00968 or direct 8 digits starting with 2, 7, or 9
+            const omanPhoneRegex = /^(?:(?:\+|00)?968)?[279]\d{7}$/;
+            return omanPhoneRegex.test(cleanPhone);
+        }
+
+        function submitCustomerInfo() {
+            const form = document.getElementById('customerForm');
+            const name = form.querySelector('[name="name"]').value.trim();
+            const phone = form.querySelector('[name="phone"]').value.trim();
+            const address = form.querySelector('[name="address"]').value.trim();
+            const notes = form.querySelector('[name="notes"]').value.trim();
+            
+            let hasError = false;
+            
+            // Reset errors
+            document.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+            
+            // Validate name
+            if (!name) {
+                form.querySelector('[name="name"]').closest('.form-group').classList.add('has-error');
+                hasError = true;
+            }
+            
+            // Validate phone (Oman format)
+            if (!validateOmanPhone(phone)) {
+                form.querySelector('[name="phone"]').closest('.form-group').classList.add('has-error');
+                hasError = true;
+            }
+            
+            // Validate address
+            if (!address) {
+                form.querySelector('[name="address"]').closest('.form-group').classList.add('has-error');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            // Store customer info and send order
+            window.customerInfo = { name, phone, address, notes };
+            sendWhatsAppOrder();
+        }
+
+        function sendWhatsAppOrder() {
+            if (!window.customerInfo) {
+                showToast(currentLang === 'ar' ? 'يرجى إدخال معلومات العميل' : 'Please enter customer information');
+                return;
+            }
+            
+            const { name, phone, address, notes } = window.customerInfo;
+            
+            let message = "*Hello Zarafet Perfumes!* %0A%0A";
+            
+            // Customer Info
+            message += "*Customer Information:*%0A";
+            message += `Name: ${name}%0A`;
+            message += `Phone: ${phone}%0A`;
+            message += `Address: ${address}%0A`;
+            if (notes) message += `Notes: ${notes}%0A`;
+            message += "%0A";
+            
+            // Order
+            message += "*Order:*%0A";
             let total = 0;
             
             cart.forEach(item => {
@@ -3854,9 +4181,18 @@
                 total += itemTotal;
             });
             
-            message += `%0A*Total: OMR ${total.toFixed(3)}*%0A%0AThank you!`;
+            message += `%0A*Total: OMR ${total.toFixed(3)}*%0A`;
+            message += "*Delivery: Within 1 day in Muscat*%0A%0A";
+            message += "Thank you!";
             
             window.open(`https://wa.me/96897407870?text=${message}`, '_blank');
+            
+            // Clear cart after order
+            cart = [];
+            saveCart();
+            closeSidebars();
+            closeCustomerInfoForm();
+            showToast(currentLang === 'ar' ? 'تم إرسال الطلب بنجاح!' : 'Order sent successfully!');
         }
 
         // ============================================
