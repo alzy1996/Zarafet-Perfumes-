@@ -1559,13 +1559,6 @@
             background: var(--bronze-dark);
         }
 
-        /* Footer */
-        footer {
-            background: var(--white);
-            border-top: 1px solid var(--border);
-            padding: 5rem 5% 2rem;
-        }
-
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr;
@@ -2243,20 +2236,6 @@
             </div>
         </div>
     </section>
-                <p>Rich oud and amber for special occasions</p>
-            </div>
-            <div class="pairing-card" onclick="filterProducts('floral')">
-                <i class="fas fa-heart"></i>
-                <h4>Romantic Dates</h4>
-                <p>Romantic florals that leave lasting impressions</p>
-            </div>
-            <div class="pairing-card" onclick="filterProducts('oriental')">
-                <i class="fas fa-briefcase"></i>
-                <h4>Professional</h4>
-                <p>Subtle, sophisticated scents for the workplace</p>
-            </div>
-        </div>
-    </section>
 
     <!-- Memory Wall -->
     <section class="memory-section" id="memory">
@@ -2353,7 +2332,7 @@
             <div class="contact-card">
                 <i class="fas fa-envelope"></i>
                 <h4 data-i18n="contact.email">Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7a09151408541c171d3a1d171b131654191517">[email&#160;protected]</a></p>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d2e32332f733b303a1d3a303c3431733e3230">[email&#160;protected]</a></p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-map-marker-alt"></i>
@@ -2537,13 +2516,18 @@
         }
 
         function scrollToSection(index) {
-            if (index < 0 || index >= totalSections) return;
+            console.log('scrollToSection called with index:', index);
+            if (index < 0 || index >= totalSections) {
+                console.log('Invalid index, returning');
+                return;
+            }
             
             isScrolling = true;
             currentSection = index;
             const targetX = index * window.innerWidth;
             
-            // Use native scroll with smooth behavior
+            console.log('Scrolling to position:', targetX);
+            
             wrapper.scrollTo({
                 left: targetX,
                 behavior: 'smooth'
