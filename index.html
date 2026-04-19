@@ -62,13 +62,15 @@
             scroll-behavior: smooth;
             scrollbar-width: none;
             -ms-overflow-style: none;
+            /* Force LTR to maintain consistent scroll behavior in RTL mode */
+            direction: ltr !important;
         }
 
         .horizontal-wrapper::-webkit-scrollbar {
             display: none;
         }
 
-        /* Each section takes full viewport width */
+        /* Each section takes full viewport width - content can be RTL but wrapper stays LTR for scroll */
         .horizontal-wrapper > section {
             min-width: 100vw;
             width: 100vw;
@@ -78,6 +80,13 @@
             box-sizing: border-box;
             overflow-y: auto;
             overflow-x: hidden;
+            /* Allow content to inherit direction from HTML */
+            direction: inherit;
+        }
+
+        /* Ensure RTL content displays correctly inside sections */
+        html[dir="rtl"] .horizontal-wrapper > section {
+            direction: rtl;
         }
 
         /* Header stays fixed on top */
@@ -374,6 +383,14 @@
         }
 
         .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--bronze);
+        }
+
+        .nav-links a.active::after {
             width: 100%;
         }
 
@@ -2331,7 +2348,7 @@
             <div class="contact-card">
                 <i class="fas fa-envelope"></i>
                 <h4 data-i18n="contact.email">Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="54273b3a267a323933143339353d387a373b39">[email&#160;protected]</a></p>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cab9a5a4b8e4aca7ad8aada7aba3a6e4a9a5a7">[email&#160;protected]</a></p>
             </div>
             <div class="contact-card">
                 <i class="fas fa-map-marker-alt"></i>
@@ -2462,6 +2479,11 @@
         let currentSection = 0;
         const totalSections = 10; // home, quiz, collection, pairing, memory, unboxing, about, contact, newsletter, footer
 
+        // Get scroll position (handles RTL correctly since wrapper is forced LTR)
+        function getScrollLeft() {
+            return wrapper.scrollLeft;
+        }
+
         // Convert vertical wheel scroll to horizontal scroll
         window.addEventListener('wheel', (e) => {
             if (isScrolling) return;
@@ -2519,6 +2541,11 @@
                 behavior: 'smooth'
             });
             
+            // Update active nav link
+            document.querySelectorAll('.nav-links a').forEach((link, i) => {
+                link.classList.toggle('active', i === index);
+            });
+            
             setTimeout(() => {
                 isScrolling = false;
             }, 800);
@@ -2533,6 +2560,26 @@
                 currentSection = Math.max(currentSection - 1, 0);
                 scrollToSection(currentSection);
             }
+        });
+
+        // IntersectionObserver to update current section based on scroll position
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionIndex = Array.from(wrapper.querySelectorAll('section, footer')).indexOf(entry.target);
+                    if (sectionIndex !== -1) {
+                        currentSection = sectionIndex;
+                    }
+                }
+            });
+        }, { 
+            root: wrapper,
+            threshold: 0.5 
+        });
+
+        // Observe all sections
+        wrapper.querySelectorAll('section, footer').forEach(section => {
+            sectionObserver.observe(section);
         });
 
         // ============================================
@@ -3169,6 +3216,9 @@
 
             // Create particles
             createParticles();
+            
+            // Initialize spark canvas
+            initSparkCanvas();
 
             // Render products
             renderProducts();
@@ -3210,6 +3260,96 @@
                 particle.style.animationDuration = (10 + Math.random() * 10) + 's';
                 container.appendChild(particle);
             }
+        }
+
+        // ============================================
+        // CANVAS SPARK ANIMATION
+        // ============================================
+        let sparkCanvas, sparkCtx;
+        let sparks = [];
+        let scrollVelocity = 0;
+        let lastScrollLeft = 0;
+        
+        function initSparkCanvas() {
+            sparkCanvas = document.createElement('canvas');
+            sparkCanvas.id = 'sparkCanvas';
+            sparkCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;';
+            document.body.appendChild(sparkCanvas);
+            sparkCtx = sparkCanvas.getContext('2d');
+            
+            resizeSparkCanvas();
+            window.addEventListener('resize', resizeSparkCanvas);
+            
+            // Track scroll velocity for spark intensity
+            wrapper.addEventListener('scroll', () => {
+                const currentScroll = wrapper.scrollLeft;
+                scrollVelocity = Math.abs(currentScroll - lastScrollLeft);
+                lastScrollLeft = currentScroll;
+                
+                // Create sparks based on scroll velocity
+                const sparkCount = Math.min(Math.floor(scrollVelocity / 5), 5);
+                for (let i = 0; i < sparkCount; i++) {
+                    createSpark();
+                }
+            }, { passive: true });
+            
+            animateSparks();
+        }
+        
+        function resizeSparkCanvas() {
+            sparkCanvas.width = window.innerWidth;
+            sparkCanvas.height = window.innerHeight;
+        }
+        
+        function createSpark() {
+            const colors = ['#8b7355', '#a68b6b', '#c4a77d', '#d4b896', '#e8c9a8'];
+            sparks.push({
+                x: Math.random() * sparkCanvas.width,
+                y: Math.random() * sparkCanvas.height,
+                vx: (Math.random() - 0.5) * 3,
+                vy: (Math.random() - 0.5) * 3 - 1,
+                size: Math.random() * 3 + 1,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                alpha: 1,
+                decay: 0.01 + Math.random() * 0.02,
+                twinkle: Math.random() * Math.PI
+            });
+        }
+        
+        function animateSparks() {
+            sparkCtx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+            
+            // Add ambient sparks occasionally
+            if (Math.random() < 0.05) {
+                createSpark();
+            }
+            
+            sparks = sparks.filter(spark => {
+                // Update position
+                spark.x += spark.vx;
+                spark.y += spark.vy;
+                spark.vy += 0.05; // gravity
+                spark.alpha -= spark.decay;
+                spark.twinkle += 0.1;
+                
+                // Draw spark with twinkle effect
+                if (spark.alpha > 0) {
+                    const twinkleAlpha = spark.alpha * (0.7 + 0.3 * Math.sin(spark.twinkle));
+                    sparkCtx.save();
+                    sparkCtx.globalAlpha = twinkleAlpha;
+                    sparkCtx.fillStyle = spark.color;
+                    sparkCtx.shadowColor = spark.color;
+                    sparkCtx.shadowBlur = 10;
+                    sparkCtx.beginPath();
+                    sparkCtx.arc(spark.x, spark.y, spark.size, 0, Math.PI * 2);
+                    sparkCtx.fill();
+                    sparkCtx.restore();
+                    return true;
+                }
+                return false;
+            });
+            
+            requestAnimationFrame(animateSparks);
         }
 
         // ============================================
